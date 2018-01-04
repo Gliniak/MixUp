@@ -100,8 +100,9 @@ public class GreetingsActivity extends AppCompatActivity {
                                         Toast.makeText(GreetingsActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                     }
                                 } else {
-                                    Intent intent = new Intent(GreetingsActivity.this, GreetingsActivity.class);
-                                    startActivity(intent);
+                                    Toast.makeText( GreetingsActivity.this, "LOGIN OK", Toast.LENGTH_LONG).show();
+                                    //Intent intent = new Intent(GreetingsActivity.this, GreetingsActivity.class);
+                                    //startActivity(intent);
                                     finish();
                                 }
                             }
