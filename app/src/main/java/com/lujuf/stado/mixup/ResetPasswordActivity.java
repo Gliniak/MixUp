@@ -1,10 +1,8 @@
 package com.lujuf.stado.mixup;
 
-import android.support.v7.app.AppCompatActivity;
-
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
  * Created by Gliniak on 05.01.2018.
  */
 
-public class ResetPasswordActivity extends AppCompatActivity {
+public class ResetPasswordActivity extends Activity {
 
     private EditText inputEmail;
     private Button btnReset, btnBack;
@@ -30,7 +28,10 @@ public class ResetPasswordActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_reset_password);
+
 
         inputEmail = (EditText) findViewById(R.id.email);
         btnReset = (Button) findViewById(R.id.btn_reset_password);
