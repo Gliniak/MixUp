@@ -43,12 +43,12 @@ public class GreetingsActivity extends Activity {
        // Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
-        inputEmail = (EditText) findViewById(R.id.email);
-        inputPassword = (EditText) findViewById(R.id.password);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        btnSignup = (Button) findViewById(R.id.register_button);
-        btnLogin = (Button) findViewById(R.id.login_button);
-        btnReset = (Button) findViewById(R.id.btn_reset_password);
+        inputEmail = findViewById(R.id.email);
+        inputPassword = findViewById(R.id.password);
+        progressBar =  findViewById(R.id.progressBar);
+        btnSignup =  findViewById(R.id.register_button);
+        btnLogin =  findViewById(R.id.login_button);
+        btnReset =  findViewById(R.id.btn_reset_password);
 
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
