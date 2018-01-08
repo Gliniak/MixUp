@@ -10,8 +10,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,14 +22,19 @@ public class MainScreenActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseAuth auth;
-    private TextView userName;
+
     private Toolbar mainToolBar;
+
+    // User Stuff
+    private TextView userName;
+    private ImageView userAvatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainscreen);
 
+        // User Auth Part
         auth = FirebaseAuth.getInstance();
 
         if (auth.getCurrentUser() == null) {
@@ -35,11 +42,12 @@ public class MainScreenActivity extends AppCompatActivity
             finish();
         }
 
+        // Adding Main Bar to Layout
         mainToolBar = (Toolbar) findViewById(R.id.toolbar);
-        mainToolBar.setTitle("Wall");
+        mainToolBar.setTitle(R.string.bar_text_wall); // Need to do this auto
         setSupportActionBar(mainToolBar);
-        //setSupportActionBar(toolbar);
 
+        // Adding This little sh&t in bottom right corner
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,17 +57,36 @@ public class MainScreenActivity extends AppCompatActivity
             }
         });
 
+        // Adding Rear Panel
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, mainToolBar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         drawer.addDrawerListener(toggle);
+
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        userName = findViewById(R.id.username_bar);
+        View mainBarView = navigationView.getHeaderView(0);
+        //Possible NullPointer Crash?
+        userAvatar = mainBarView.findViewById(R.id.user_avatar_bar);
+        userName = mainBarView.findViewById(R.id.username_bar);
+
+        userAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                mainToolBar.setTitle(R.string.bar_text_user_profile);
+                Log.d("GUI", "User Pressed Avatar!");
+
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+                // Send To My Profile Tab
+            }
+
+        });
 
         if(userName != null)
             userName.setText(auth.getCurrentUser().getEmail());
@@ -75,21 +102,6 @@ public class MainScreenActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -99,11 +111,12 @@ public class MainScreenActivity extends AppCompatActivity
         switch(id)
         {
             case R.id.nav_wall:
-                mainToolBar.setTitle("Wall"); // CHANGE THIS
+                mainToolBar.setTitle(R.string.bar_text_wall);
+                Log.d("GUI", "User Pressed Wall Button!");
                 break;
 
             case R.id.nav_search:
-                mainToolBar.setTitle("Search");
+                mainToolBar.setTitle(R.string.bar_text_lookup);
                 break;
 
             case R.id.nav_logout:
