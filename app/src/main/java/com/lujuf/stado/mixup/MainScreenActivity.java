@@ -5,12 +5,15 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,12 +21,16 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+
+// DO A FUC%$N CLEANUP SOON OK BRO?
+
 public class MainScreenActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseAuth auth;
 
     private Toolbar mainToolBar;
+    private LayoutInflater inflater;
 
     // User Stuff
     private TextView userName;
@@ -90,6 +97,17 @@ public class MainScreenActivity extends AppCompatActivity
 
         if(userName != null)
             userName.setText(auth.getCurrentUser().getEmail());
+
+        inflater = getLayoutInflater();
+
+        Fragment fragment = new WallFragment();
+
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, fragment);
+            ft.commit();
+        }
+
     }
 
     @Override
@@ -105,6 +123,8 @@ public class MainScreenActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+
+        Fragment fragment = null;
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -113,12 +133,17 @@ public class MainScreenActivity extends AppCompatActivity
             case R.id.nav_wall:
                 mainToolBar.setTitle(R.string.bar_text_wall);
                 Log.d("GUI", "User Pressed Wall Button!");
+                fragment = new WallFragment();
                 break;
 
             case R.id.nav_search:
                 mainToolBar.setTitle(R.string.bar_text_lookup);
                 break;
 
+            case R.id.nav_app_settings:
+                mainToolBar.setTitle(R.string.bar_text_settings);
+                fragment = new AppSettingsFragment();
+                break;
             case R.id.nav_logout:
                 if (auth.getCurrentUser() != null)
                 {
@@ -129,6 +154,12 @@ public class MainScreenActivity extends AppCompatActivity
                 break;
 
             default: break;
+        }
+
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, fragment);
+            ft.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
