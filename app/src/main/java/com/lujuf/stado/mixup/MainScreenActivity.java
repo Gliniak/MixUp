@@ -90,6 +90,14 @@ public class MainScreenActivity extends AppCompatActivity
 
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
+
+                Fragment fragment = new MyProfileFragment();
+
+                if (fragment != null) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, fragment);
+                    ft.commit();
+                }
                 // Send To My Profile Tab
             }
 
