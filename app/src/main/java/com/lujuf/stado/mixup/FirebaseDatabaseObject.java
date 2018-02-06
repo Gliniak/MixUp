@@ -44,6 +44,8 @@ public class FirebaseDatabaseObject
             this.rated = rated;
             this.IsMy = IsMy;
         }
+
+        public long GetSongID() { return SongID; }
     }
 }
 

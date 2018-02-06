@@ -94,9 +94,9 @@ public class RegisterActivity extends Activity {
                                     mDatabase.getReference().child("users").child(mAuth.getUid()).setValue(obj);
                                     mDatabase.getReference().push();
 
-                                    obj = new FirebaseDatabaseObject.FirebaseDatabaseObjectUserSongs(0, false, -1, false);
+                                    FirebaseDatabaseObject.FirebaseDatabaseObjectUserSongs defaultSong = new FirebaseDatabaseObject.FirebaseDatabaseObjectUserSongs(0, false, -1, false);
 
-                                    mDatabase.getReference().child("users").child(mAuth.getUid()).child("Songs").child("id").setValue(obj);
+                                    mDatabase.getReference().child("users").child(mAuth.getUid()).child("Songs").child(String.valueOf(defaultSong.GetSongID())).setValue(defaultSong);
                                     mDatabase.getReference().push();
 
                                     startActivity(new Intent(RegisterActivity.this, GreetingsActivity.class));
