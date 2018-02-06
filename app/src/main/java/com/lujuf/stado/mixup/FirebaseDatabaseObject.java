@@ -24,13 +24,25 @@ public class FirebaseDatabaseObject
     @IgnoreExtraProperties
     public static class FirebaseDatabaseObjectUserSongs
     {
-        public String buyed;
-        public String rated;
+        public long SongID;
+        public boolean buyed;
+        public int rated;
+        public boolean IsMy;
 
         public FirebaseDatabaseObjectUserSongs()
         {
-            this.buyed = "";
-            this.rated = "";
+            this.SongID = 0;
+            this.buyed = false;
+            this.rated = -1;
+            this.IsMy = false;
+        }
+
+        public FirebaseDatabaseObjectUserSongs(long SongId, boolean isBuyed, int rated, boolean IsMy)
+        {
+            this.SongID = SongId;
+            this.buyed = isBuyed;
+            this.rated = rated;
+            this.IsMy = IsMy;
         }
     }
 }

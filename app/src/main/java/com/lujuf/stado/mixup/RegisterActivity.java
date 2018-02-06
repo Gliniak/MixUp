@@ -88,7 +88,16 @@ public class RegisterActivity extends Activity {
                                 } else {
 
                                     // Need to add Database fields
+                                    // GRRRR BETTER WAY TO DO IT MAYBE?! ONLY WHEN IT NOT EXIST
+                                    Object obj = new FirebaseDatabaseObject.FirebaseDatabaseObjectUser();
 
+                                    mDatabase.getReference().child("users").child(mAuth.getUid()).setValue(obj);
+                                    mDatabase.getReference().push();
+
+                                    obj = new FirebaseDatabaseObject.FirebaseDatabaseObjectUserSongs(0, false, -1, false);
+
+                                    mDatabase.getReference().child("users").child(mAuth.getUid()).child("Songs").child("id").setValue(obj);
+                                    mDatabase.getReference().push();
 
                                     startActivity(new Intent(RegisterActivity.this, GreetingsActivity.class));
                                     finish();

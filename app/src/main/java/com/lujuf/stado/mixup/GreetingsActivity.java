@@ -111,15 +111,6 @@ public class GreetingsActivity extends Activity {
                                 }
                                 else
                                 {
-                                    // GRRRR BETTER WAY TO DO IT MAYBE?! ONLY WHEN IT NOT EXIST
-                                    Object obj = new FirebaseDatabaseObject.FirebaseDatabaseObjectUser();
-                                    mDatabase.child("users").child(auth.getUid()).setValue(obj);
-                                    mDatabase.push();
-
-                                    obj = new FirebaseDatabaseObject.FirebaseDatabaseObjectUserSongs();
-                                    mDatabase.child("users").child(auth.getUid()).child("Songs").child("id").setValue(obj);
-                                    mDatabase.push();
-
                                     Toast.makeText( GreetingsActivity.this, "LOGIN OK", Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(GreetingsActivity.this, MainScreenActivity.class);
                                     startActivity(intent);
