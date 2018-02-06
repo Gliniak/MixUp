@@ -15,11 +15,16 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class GreetingsActivity extends Activity {
 
     private EditText inputEmail, inputPassword;
+
     private FirebaseAuth auth;
+    private DatabaseReference mDatabase;
+
     private ProgressBar progressBar;
     private Button btnSignup, btnLogin, btnReset;
 
@@ -31,6 +36,7 @@ public class GreetingsActivity extends Activity {
 
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         if (auth.getCurrentUser() != null) {
             startActivity(new Intent(GreetingsActivity.this, MainScreenActivity.class));
@@ -94,14 +100,26 @@ public class GreetingsActivity extends Activity {
                                 // the auth state listener will be notified and logic to handle the
                                 // signed in user can be handled in the listener.
                                 progressBar.setVisibility(View.GONE);
-                                if (!task.isSuccessful()) {
+                                if (!task.isSuccessful())
+                                {
                                     // there was an error
                                     if (password.length() < 6) {
                                         inputPassword.setError(getString(R.string.minimum_password));
                                     } else {
                                         Toast.makeText(GreetingsActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                     }
-                                } else {
+                                }
+                                else
+                                {
+                                    // GRRRR BETTER WAY TO DO IT MAYBE?! ONLY WHEN IT NOT EXIST
+                                    Object obj = new FirebaseDatabaseObject.FirebaseDatabaseObjectUser();
+                                    mDatabase.child("users").child(auth.getUid()).setValue(obj);
+                                    mDatabase.push();
+
+                                    obj = new FirebaseDatabaseObject.FirebaseDatabaseObjectUserSongs();
+                                    mDatabase.child("users").child(auth.getUid()).child("Songs").child("id").setValue(obj);
+                                    mDatabase.push();
+
                                     Toast.makeText( GreetingsActivity.this, "LOGIN OK", Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(GreetingsActivity.this, MainScreenActivity.class);
                                     startActivity(intent);

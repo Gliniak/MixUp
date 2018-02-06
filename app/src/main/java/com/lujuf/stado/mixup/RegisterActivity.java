@@ -1,6 +1,7 @@
 package com.lujuf.stado.mixup;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -14,6 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends Activity {
 
@@ -22,6 +24,7 @@ public class RegisterActivity extends Activity {
     private ProgressBar progressBar;
 
     private FirebaseAuth mAuth;
+    private FirebaseDatabase mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,7 @@ public class RegisterActivity extends Activity {
         //this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance();
 
         btnSignIn = (Button) findViewById(R.id.sign_in_button);
         btnSignUp = (Button) findViewById(R.id.sign_up_button);
@@ -82,7 +86,11 @@ public class RegisterActivity extends Activity {
                                     Toast.makeText(RegisterActivity.this, "Authentication failed." + task.getException(),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    // startActivity(new Intent(GreetingsActivity.this, MainActivity.class));
+
+                                    // Need to add Database fields
+
+
+                                    startActivity(new Intent(RegisterActivity.this, GreetingsActivity.class));
                                     finish();
                                 }
                             }
