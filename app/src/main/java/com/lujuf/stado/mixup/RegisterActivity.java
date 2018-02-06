@@ -94,9 +94,12 @@ public class RegisterActivity extends Activity {
                                     mDatabase.getReference().child("users").child(mAuth.getUid()).setValue(obj);
                                     mDatabase.getReference().push();
 
-                                    // Makes a really Bad Sh*t in DB
-                                    FirebaseDatabaseObject.FirebaseDatabaseObjectUserSongs defaultSong = new FirebaseDatabaseObject.FirebaseDatabaseObjectUserSongs(0, false, -1, false);
+                                    String newSong = mDatabase.getReference().child("users").child(mAuth.getUid()).child("Songs").push().getKey();
 
+                                    // Makes a really Bad Sh*t in DB
+                                    FirebaseDatabaseObject.UserSongs defaultSong = new FirebaseDatabaseObject.UserSongs(newSong, false, -1, false);
+
+                                    //defaultSong.
                                     mDatabase.getReference().child("users").child(mAuth.getUid()).child("Songs").child(String.valueOf(defaultSong.GetSongID())).setValue(defaultSong.GetSongData());
                                     mDatabase.getReference().push();
 

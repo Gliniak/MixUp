@@ -1,5 +1,6 @@
 package com.lujuf.stado.mixup;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -27,6 +28,8 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainScreenActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static Context context;
+
     private FirebaseAuth auth;
 
     private Toolbar mainToolBar;
@@ -48,6 +51,8 @@ public class MainScreenActivity extends AppCompatActivity
             startActivity(new Intent(MainScreenActivity.this, GreetingsActivity.class));
             finish();
         }
+
+        context = getApplicationContext();
 
         // Adding Main Bar to Layout
         mainToolBar = (Toolbar) findViewById(R.id.toolbar);
@@ -95,6 +100,7 @@ public class MainScreenActivity extends AppCompatActivity
 
                 if (fragment != null) {
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
                     ft.replace(R.id.content_frame, fragment);
                     ft.commit();
                 }
