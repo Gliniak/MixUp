@@ -25,27 +25,40 @@ public class FirebaseDatabaseObject
     public static class FirebaseDatabaseObjectUserSongs
     {
         public long SongID;
-        public boolean buyed;
-        public int rated;
-        public boolean IsMy;
+        public UserSongData songData;
+
+        public static class UserSongData {
+            public boolean buyed;
+            public int rated;
+            public boolean IsMy;
+
+            public UserSongData() {
+                this.buyed = false;
+                this.rated = -1;
+                this.IsMy = false;
+            }
+
+            public UserSongData(boolean isBuyed, int rated, boolean IsMy) {
+                this.buyed = isBuyed;
+                this.rated = rated;
+                this.IsMy = IsMy;
+            }
+        }
 
         public FirebaseDatabaseObjectUserSongs()
         {
             this.SongID = 0;
-            this.buyed = false;
-            this.rated = -1;
-            this.IsMy = false;
+            this.songData = new UserSongData();
         }
 
         public FirebaseDatabaseObjectUserSongs(long SongId, boolean isBuyed, int rated, boolean IsMy)
         {
             this.SongID = SongId;
-            this.buyed = isBuyed;
-            this.rated = rated;
-            this.IsMy = IsMy;
+            this.songData = new UserSongData(isBuyed, rated, IsMy);
         }
 
         public long GetSongID() { return SongID; }
+        public UserSongData GetSongData() { return songData; }
     }
 }
 
