@@ -122,7 +122,11 @@ public class FirebaseDatabaseObject
 
         public static DatabaseSongs ConvertFromSnapshot(DataSnapshot snap)
         {
-            DatabaseSongs song = snap.getValue(DatabaseSongs.class);
+            DatabaseSongs song = new DatabaseSongs();
+
+            song.SongID = snap.getKey();
+            song.songData = snap.getValue(SongData.class);
+
             return song;
         }
     }

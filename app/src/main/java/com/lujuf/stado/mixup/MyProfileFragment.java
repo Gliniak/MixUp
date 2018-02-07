@@ -107,6 +107,8 @@ public class MyProfileFragment extends Fragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for(DataSnapshot singleSnapshot : dataSnapshot.getChildren())
                         {
+                            FirebaseDatabaseObject.DatabaseSongs song = FirebaseDatabaseObject.DatabaseSongs.ConvertFromSnapshot(singleSnapshot);
+
                             songsList.add(FirebaseDatabaseObject.DatabaseSongs.ConvertFromSnapshot(singleSnapshot));
                             mAdapter.notifyDataSetChanged();
 
