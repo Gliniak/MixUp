@@ -34,6 +34,8 @@ public class MyProfileFragment extends Fragment {
 
     private Button dummy_song_button;
     private Button show_songs;
+
+
     private RecyclerView songs_view;
 
     private List<FirebaseDatabaseObject.DatabaseSongs> songsList = new ArrayList<>();
@@ -65,7 +67,10 @@ public class MyProfileFragment extends Fragment {
 
         dummy_song_button = (Button) getView().findViewById(R.id.generate_dummy_songs);
         show_songs = (Button) getView().findViewById(R.id.show_songs);
+
+
         songs_view = (RecyclerView) getView().findViewById(R.id.songs_view);
+
 
         TextView userMail = (TextView) getView().findViewById(R.id.user_email);
 

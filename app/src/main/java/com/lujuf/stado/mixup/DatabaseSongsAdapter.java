@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,18 +36,33 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
     private FirebaseDatabase mDatabase;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        public TextView title_author;
+        public TextView song_genre;
+
+        public Button play_song;
         public Button buySong;
+
 
         private WeakReference<ClickListener> listenerRef;
 
         public MyViewHolder(View view, ClickListener listener) {
             super(view);
-            buySong = (Button) view.findViewById(R.id.buy_song);
-            listenerRef = new WeakReference<>(listener);
-            buySong.setOnClickListener(this);
 
             mAuth = FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance();
+
+            title_author = (TextView) view.findViewById(R.id.song_list_title_author);
+            song_genre = (TextView) view.findViewById(R.id.song_list_genre);
+
+
+            play_song = (Button) view.findViewById(R.id.song_list_play_song);
+            buySong = (Button) view.findViewById(R.id.buy_song);
+
+            listenerRef = new WeakReference<>(listener);
+            buySong.setOnClickListener(this);
+
+
         }
 
         @Override
@@ -95,7 +111,9 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         FirebaseDatabaseObject.DatabaseSongs song = songsList.get(position);
-        holder.buySong.setText(song.songData.GetSongTitle());
+
+        holder.title_author.setText(song.GetSongData().GetSongTitle());
+        //holder.buySong.setText(song.songData.GetSongTitle());
     }
 
     @Override
