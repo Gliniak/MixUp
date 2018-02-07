@@ -74,7 +74,17 @@ public class MyProfileFragment extends Fragment {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         userMail.setText(auth.getCurrentUser().getEmail());
 
-        mAdapter = new DatabaseSongsAdapter(songsList);
+        mAdapter = new DatabaseSongsAdapter(songsList, new DatabaseSongsAdapter.ClickListener() {
+            @Override
+            public void onPositionClicked(int position) {
+
+            }
+
+            @Override
+            public void onLongClicked(int position) {
+
+            }
+        });
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
 
         songs_view.setLayoutManager(mLayoutManager);

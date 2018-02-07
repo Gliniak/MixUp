@@ -5,29 +5,73 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
  * Created by Gliniak on 06.02.2018.
  */
 
+
+
 public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdapter.MyViewHolder>
 {
+    public interface ClickListener {
+
+        void onPositionClicked(int position);
+
+        void onLongClicked(int position);
+    }
+
+    private final ClickListener listener;
     private List<FirebaseDatabaseObject.DatabaseSongs> songsList;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase mDatabase;
+
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public Button buySong;
 
-        public MyViewHolder(View view) {
+        private WeakReference<ClickListener> listenerRef;
+
+        public MyViewHolder(View view, ClickListener listener) {
             super(view);
             buySong = (Button) view.findViewById(R.id.buy_song);
+            listenerRef = new WeakReference<>(listener);
+            buySong.setOnClickListener(this);
+
+            mAuth = FirebaseAuth.getInstance();
+            mDatabase = FirebaseDatabase.getInstance();
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            if (v.getId() == buySong.getId()) {
+                FirebaseDatabaseObject.DatabaseSongs song = songsList.get(getAdapterPosition());
+                Toast.makeText(v.getContext(), "You Added A new song to your Collection: " + song.songData.Name, Toast.LENGTH_SHORT).show();
+
+                FirebaseDatabaseObject.UserSongs u_song = new FirebaseDatabaseObject.UserSongs(song.SongID, true, 10, false);
+                mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Songs").child(song.SongID).setValue(u_song);
+                mDatabase.getReference().push();
+
+            } else {
+                Toast.makeText(v.getContext(), "ROW PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
+            }
+
+            listenerRef.get().onPositionClicked(getAdapterPosition());
         }
     }
 
 
-    public DatabaseSongsAdapter(List<FirebaseDatabaseObject.DatabaseSongs> songsList) {
+    public DatabaseSongsAdapter(List<FirebaseDatabaseObject.DatabaseSongs> songsList, ClickListener listener) {
         this.songsList = songsList;
+        this.listener = listener;
     }
 
     @Override
@@ -35,7 +79,17 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.song_list_row, parent, false);
 
-        return new MyViewHolder(itemView);
+        return new MyViewHolder(itemView, new ClickListener() {
+            @Override
+            public void onPositionClicked(int position) {
+
+            }
+
+            @Override
+            public void onLongClicked(int position) {
+
+            }
+        });
     }
 
     @Override

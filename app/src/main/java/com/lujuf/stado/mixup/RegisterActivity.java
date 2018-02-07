@@ -86,21 +86,10 @@ public class RegisterActivity extends Activity {
                                     Toast.makeText(RegisterActivity.this, "Authentication failed." + task.getException(),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-
-                                    // Need to add Database fields
                                     // GRRRR BETTER WAY TO DO IT MAYBE?! ONLY WHEN IT NOT EXIST
                                     Object obj = new FirebaseDatabaseObject.FirebaseDatabaseObjectUser();
 
-                                    mDatabase.getReference().child("users").child(mAuth.getUid()).setValue(obj);
-                                    mDatabase.getReference().push();
-
-                                    String newSong = mDatabase.getReference().child("users").child(mAuth.getUid()).child("Songs").push().getKey();
-
-                                    // Makes a really Bad Sh*t in DB
-                                    FirebaseDatabaseObject.UserSongs defaultSong = new FirebaseDatabaseObject.UserSongs(newSong, false, -1, false);
-
-                                    //defaultSong.
-                                    mDatabase.getReference().child("users").child(mAuth.getUid()).child("Songs").child(String.valueOf(defaultSong.GetSongID())).setValue(defaultSong.GetSongData());
+                                    mDatabase.getReference().child("Users").child(mAuth.getUid()).setValue(obj);
                                     mDatabase.getReference().push();
 
                                     startActivity(new Intent(RegisterActivity.this, GreetingsActivity.class));
