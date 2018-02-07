@@ -61,7 +61,7 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
                 mDatabase.getReference().push();
 
             } else {
-                Toast.makeText(v.getContext(), "ROW PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(v.getContext(), "ROW PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
             }
 
             listenerRef.get().onPositionClicked(getAdapterPosition());

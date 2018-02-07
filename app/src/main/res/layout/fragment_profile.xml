@@ -34,11 +34,6 @@
             android:layout_height="wrap_content"
             android:text="Show Songs" />
 
-        <TextView
-            android:id="@+id/song_list"
-            android:layout_width="match_parent"
-            android:layout_height="155dp" />
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/songs_view"
             android:layout_width="match_parent"
