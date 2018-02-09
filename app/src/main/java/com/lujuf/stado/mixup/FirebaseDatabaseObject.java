@@ -3,27 +3,86 @@ package com.lujuf.stado.mixup;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.EnumSet;
+import java.util.List;
+
 /**
  * Created by Gliniak on 09.01.2018.
  */
 
 public class FirebaseDatabaseObject
 {
+    public enum GenreTypes
+    {
+        GENRE_TYPE_NOTDEFINED,
+        GENRE_TYPE_ROCK,
+        GENRE_TYPE_POP,
+        GENRE_TYPE_RAP,
+        GENRE_TYPE_METAL,
+        // itd
+    };
+
+    public static final EnumSet<GenreTypes> GenreTypesSet = EnumSet.allOf(GenreTypes.class);
+
+    public enum SongFlags
+    {
+        SONG_FLAG_NOTDEFINED,
+        SONG_FLAG_FREE,
+        // more later?
+    };
+
+    public static final EnumSet<SongFlags> songFlagsSet = EnumSet.allOf(SongFlags.class);
+
     @IgnoreExtraProperties
     public static class FirebaseDatabaseObjectUser
     {
         public String nick;
         public String AvatarLink;
 
+        public List<UserSongs> songs;
+        public List<UserCartItem> cart;
+
         public FirebaseDatabaseObjectUser()
         {
             this.nick = "";
             this.AvatarLink = "";
+
+            cart = null;
+            songs = null;
+        }
+
+        public static FirebaseDatabaseObjectUser ConvertFromSnapshot(DataSnapshot snap)
+        {
+            FirebaseDatabaseObjectUser user = new FirebaseDatabaseObjectUser();
+
+            user = snap.getValue(FirebaseDatabaseObjectUser.class);
+           // user.songs.
+           // song.SongID = snap.getKey();
+           // song.songData = snap.getValue(SongData.class);
+
+            return user;
+        }
+    }
+
+
+    @IgnoreExtraProperties
+    public static class UserCartItem
+    {
+        public String itemID; // Aka. Song or Album
+        public float price;
+
+        public UserCartItem(){
+            this.itemID = null;
+            this.price = 0.0f;
+        }
+
+        public UserCartItem(String itemId, float price){
+            this.itemID = itemId;
+            this.price = price;
         }
     }
 
     // USER DATABASE SONGS STUFF
-
     @IgnoreExtraProperties
     public static class UserSongs
     {
@@ -67,6 +126,7 @@ public class FirebaseDatabaseObject
     @IgnoreExtraProperties
     public static class DatabaseSongs
     {
+
         public String SongID;
         public SongData songData;
 
@@ -75,11 +135,9 @@ public class FirebaseDatabaseObject
             public String AlbumID;
             public String Name;
             public String SongLink;
+            public float price;
 
-            // 1 - Rock
-            // 2 - Pop etc
-            // Maybe Enum?
-            public int GenreFlags;
+            public GenreTypes GenreFlags;
 
             // 1 - Not Visible
             public int Flags;
@@ -89,17 +147,19 @@ public class FirebaseDatabaseObject
                 this.AlbumID = "";
                 this.Name = "";
                 this.SongLink = "";
-                this.GenreFlags = 0;
+                this.GenreFlags = GenreTypes.GENRE_TYPE_NOTDEFINED;
                 this.Flags = 1;
+                this.price = 0.0f;
             }
 
-            public SongData(String Author, String Album, String Name, String link, int Genre, int Flags) {
+            public SongData(String Author, String Album, String Name, String link, GenreTypes Genre, int Flags, float price) {
                 this.AuthorID = Author;
                 this.AlbumID = Album;
                 this.Name = Name;
                 this.SongLink = link;
                 this.GenreFlags = Genre;
                 this.Flags = Flags;
+                this.price = price;
             }
 
             public String GetSongTitle() { return this.Name; }
@@ -111,10 +171,10 @@ public class FirebaseDatabaseObject
             this.songData = new SongData();
         }
 
-        public DatabaseSongs(String SongId, String Author, String Album, String Name, String link, int Genre, int Flags)
+        public DatabaseSongs(String SongId, String Author, String Album, String Name, String link, GenreTypes Genre, int Flags, float price)
         {
             this.SongID = SongId;
-            this.songData = new SongData(Author, Album, Name, link, Genre, Flags);
+            this.songData = new SongData(Author, Album, Name, link, Genre, Flags, price);
         }
 
         public String GetSongID() { return SongID; }

@@ -111,6 +111,7 @@ public class GreetingsActivity extends Activity {
                                 }
                                 else
                                 {
+
                                     Toast.makeText( GreetingsActivity.this, "LOGIN OK", Toast.LENGTH_LONG).show();
                                     Intent intent = new Intent(GreetingsActivity.this, MainScreenActivity.class);
                                     startActivity(intent);
