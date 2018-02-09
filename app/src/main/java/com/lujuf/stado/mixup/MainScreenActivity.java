@@ -17,8 +17,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -33,6 +35,8 @@ public class MainScreenActivity extends AppCompatActivity
     private FirebaseAuth auth;
 
     private Toolbar mainToolBar;
+    private ImageButton userCart;
+
     private LayoutInflater inflater;
 
     // User Stuff
@@ -58,6 +62,24 @@ public class MainScreenActivity extends AppCompatActivity
         mainToolBar = (Toolbar) findViewById(R.id.toolbar);
         mainToolBar.setTitle(R.string.bar_text_wall); // Need to do this auto
         setSupportActionBar(mainToolBar);
+
+        userCart = (ImageButton) findViewById(R.id.menu_user_cart);
+        userCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Fragment fragment = new UserCartFragment();
+
+                if (fragment != null) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+                    ft.replace(R.id.content_frame, fragment);
+                    ft.commit();
+                }
+
+                Toast.makeText(getApplicationContext(), "SHIT BRO", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Adding This little sh&t in bottom right corner
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
