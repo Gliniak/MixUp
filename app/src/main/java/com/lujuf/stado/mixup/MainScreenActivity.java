@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -59,7 +58,7 @@ public class MainScreenActivity extends AppCompatActivity
         context = getApplicationContext();
 
         // Adding Main Bar to Layout
-        mainToolBar = (Toolbar) findViewById(R.id.toolbar);
+        mainToolBar = findViewById(R.id.toolbar);
         mainToolBar.setTitle(R.string.bar_text_wall); // Need to do this auto
         setSupportActionBar(mainToolBar);
 
@@ -77,12 +76,12 @@ public class MainScreenActivity extends AppCompatActivity
                     ft.commit();
                 }
 
-                Toast.makeText(getApplicationContext(), "SHIT BRO", Toast.LENGTH_SHORT).show();
+                mainToolBar.setTitle(R.string.bar_text_user_cart);
             }
         });
 
         // Adding This little sh&t in bottom right corner
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

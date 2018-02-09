@@ -137,7 +137,8 @@ public class FirebaseDatabaseObject
             public String SongLink;
             public float price;
 
-            public GenreTypes GenreFlags;
+            public int GenreFlags;
+           // public GenreTypes GenreFlags;
 
             // 1 - Not Visible
             public int Flags;
@@ -147,17 +148,17 @@ public class FirebaseDatabaseObject
                 this.AlbumID = "";
                 this.Name = "";
                 this.SongLink = "";
-                this.GenreFlags = GenreTypes.GENRE_TYPE_NOTDEFINED;
+                this.GenreFlags = 0;//GenreTypes.GENRE_TYPE_NOTDEFINED;
                 this.Flags = 1;
                 this.price = 0.0f;
             }
 
-            public SongData(String Author, String Album, String Name, String link, GenreTypes Genre, int Flags, float price) {
+            public SongData(String Author, String Album, String Name, String link, int Genre, int Flags, float price) {
                 this.AuthorID = Author;
                 this.AlbumID = Album;
                 this.Name = Name;
                 this.SongLink = link;
-                this.GenreFlags = Genre;
+                this.GenreFlags = 0;//GenreFlags.valueOf(String.valueOf(Genre));
                 this.Flags = Flags;
                 this.price = price;
             }
@@ -171,7 +172,7 @@ public class FirebaseDatabaseObject
             this.songData = new SongData();
         }
 
-        public DatabaseSongs(String SongId, String Author, String Album, String Name, String link, GenreTypes Genre, int Flags, float price)
+        public DatabaseSongs(String SongId, String Author, String Album, String Name, String link, int Genre, int Flags, float price)
         {
             this.SongID = SongId;
             this.songData = new SongData(Author, Album, Name, link, Genre, Flags, price);

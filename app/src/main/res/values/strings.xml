@@ -40,5 +40,6 @@
     <string name="bar_text_chat">Chat</string>
     <string name="bar_text_settings">Settings</string>
     <string name="bar_text_user_profile">Profile</string>
+    <string name="bar_text_user_cart">User Cart</string>
 
 </resources>

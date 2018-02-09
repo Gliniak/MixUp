@@ -13,9 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.app.Activity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -120,10 +120,11 @@ public class MyProfileFragment extends Fragment {
         // preparing list data
         prepareListData();
 
-        listAdapter = new ExpandableListAdapter(getActivity(), listDataHeader, listDataChild);
+        // FIX THIS!!!
+        //listAdapter = new ExpandableListAdapter(getActivity(), listDataHeader, listDataChild);
 
         // setting list adapter
-        expListView.setAdapter(listAdapter);
+       // expListView.setAdapter(listAdapter);
 
         mDatabase = FirebaseDatabase.getInstance();
 
@@ -163,7 +164,7 @@ public class MyProfileFragment extends Fragment {
                 String newSongId = mDatabase.getReference().child("Songs").push().getKey();
 
                 FirebaseDatabaseObject.DatabaseSongs defaultSong;
-                defaultSong = new FirebaseDatabaseObject.DatabaseSongs(newSongId, "Ma Ballz", "Yo Ass", "So Big", "WTF BRO", FirebaseDatabaseObject.GenreTypes.GENRE_TYPE_NOTDEFINED, 1, 3.25f);
+                defaultSong = new FirebaseDatabaseObject.DatabaseSongs(newSongId, "Ma Ballz", "Yo Ass", "So Big", "WTF BRO", 0, 1, 3.25f);
 
                 mDatabase.getReference().child("Songs").child(newSongId).setValue(defaultSong.GetSongData());
                 mDatabase.getReference().push();
