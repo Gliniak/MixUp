@@ -13,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ExpandableListAdapter;
+//import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
@@ -121,10 +121,10 @@ public class MyProfileFragment extends Fragment {
         prepareListData();
 
         // FIX THIS!!!
-        //listAdapter = new ExpandableListAdapter(getActivity(), listDataHeader, listDataChild);
+        listAdapter = new ExpandableListAdapter(getActivity(), listDataHeader, listDataChild);
 
         // setting list adapter
-       // expListView.setAdapter(listAdapter);
+       expListView.setAdapter(listAdapter);
 
         mDatabase = FirebaseDatabase.getInstance();
 
