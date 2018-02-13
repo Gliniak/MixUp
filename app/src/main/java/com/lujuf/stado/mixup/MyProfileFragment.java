@@ -107,7 +107,7 @@ public class MyProfileFragment extends Fragment {
                 String newSongId = mDatabase.getReference().child("Songs").push().getKey();
 
                 FirebaseDatabaseObject.DatabaseSongs defaultSong;
-                defaultSong = new FirebaseDatabaseObject.DatabaseSongs(newSongId, "Ma Ballz", "Yo Ass", "So Big", "WTF BRO", 0, 1, 3.25f);
+                defaultSong = new FirebaseDatabaseObject.DatabaseSongs(newSongId, "Ma Ballz", "Yo Ass", "So Big", "WTF BRO", 0, 1, 3.25f,"dickky");
 
                 mDatabase.getReference().child("Songs").child(newSongId).setValue(defaultSong.GetSongData());
                 mDatabase.getReference().push();

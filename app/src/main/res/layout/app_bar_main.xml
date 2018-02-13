@@ -13,6 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -23,30 +25,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+
                 <ImageButton
                     android:id="@+id/menu_user_cart"
                     style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_width="88dp"
+                    android:layout_height="48dp"
                     android:layout_gravity="end"
+                    android:layout_marginStart="288dp"
                     android:layout_weight="2"
                     android:paddingEnd="16dp"
                     android:scaleType="fitEnd"
                     android:showAsAction="always"
                     android:src="@drawable/ic_shopping_cart_black_24dp"
-                    tools:layout_editor_absoluteX="281dp"
-                    tools:layout_editor_absoluteY="0dp" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
-                <TextView
+                     <TextView
                     android:id="@+id/textView3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="10dp"
+                    android:layout_height="20dp"
                     android:layout_gravity="end"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
+                    android:scaleType="fitEnd"
                     android:background="@drawable/rounded_corner"
                     android:text="0"
-                    tools:layout_editor_absoluteX="342dp"
-                    tools:layout_editor_absoluteY="20dp" />
+                    android:layout_marginStart="342dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                     />
+
 
             </android.support.constraint.ConstraintLayout>
 
