@@ -37,7 +37,6 @@ public class MyProfileFragment extends Fragment {
     private FirebaseDatabase mDatabase;
 
     private Button dummy_song_button;
-    private Button show_songs;
 
     private RecyclerView songs_view;
     private SwipeRefreshLayout songs_view_refresh;
@@ -150,6 +149,7 @@ public class MyProfileFragment extends Fragment {
             }
         });
     }
+
 }
 
 

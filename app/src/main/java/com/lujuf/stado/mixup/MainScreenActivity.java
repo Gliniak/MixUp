@@ -22,6 +22,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 // DO A FUC%$N CLEANUP SOON OK BRO?
@@ -41,6 +45,8 @@ public class MainScreenActivity extends AppCompatActivity
     // User Stuff
     private TextView userName;
     private ImageView userAvatar;
+
+    public TextView cartItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +69,8 @@ public class MainScreenActivity extends AppCompatActivity
         setSupportActionBar(mainToolBar);
 
         userCart = (ImageButton) findViewById(R.id.menu_user_cart);
+        cartItems = findViewById(R.id.cart_items_amount);
+
         userCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,6 +114,8 @@ public class MainScreenActivity extends AppCompatActivity
         //Possible NullPointer Crash?
         userAvatar = mainBarView.findViewById(R.id.user_avatar_bar);
         userName = mainBarView.findViewById(R.id.username_bar);
+
+        LoadCartData();
 
         userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -200,5 +210,22 @@ public class MainScreenActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void LoadCartData()
+    {
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+
+        mDatabase.getReference().child("Users").child(auth.getUid()).child("Cart").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                cartItems.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

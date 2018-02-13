@@ -43,7 +43,6 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
         public ImageButton play_song;
         public ImageButton buySong;
 
-
         private WeakReference<ClickListener> listenerRef;
 
         public MyViewHolder(View view, ClickListener listener) {
@@ -54,7 +53,6 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
 
             title_author = (TextView) view.findViewById(R.id.song_list_title_author);
             song_genre = (TextView) view.findViewById(R.id.song_list_genre);
-
 
             play_song = (ImageButton) view.findViewById(R.id.song_list_play_song);
             buySong = (ImageButton) view.findViewById(R.id.buy_song);
@@ -70,10 +68,9 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
 
             if (v.getId() == buySong.getId()) {
                 FirebaseDatabaseObject.DatabaseSongs song = songsList.get(getAdapterPosition());
-                Toast.makeText(v.getContext(), "You Added A new song to your Collection: " + song.songData.Name, Toast.LENGTH_SHORT).show();
+                Toast.makeText(v.getContext(), "You Added A new song to your Cart: " + song.songData.Name, Toast.LENGTH_SHORT).show();
 
-                FirebaseDatabaseObject.UserSongs u_song = new FirebaseDatabaseObject.UserSongs(song.SongID, true, 10, false);
-                mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Songs").child(song.SongID).setValue(u_song);
+                mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").child(song.SongID).setValue("");
                 mDatabase.getReference().push();
 
             } else {

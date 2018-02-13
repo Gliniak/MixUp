@@ -69,16 +69,13 @@ public class FirebaseDatabaseObject
     public static class UserCartItem
     {
         public String itemID; // Aka. Song or Album
-        public float price;
 
         public UserCartItem(){
             this.itemID = null;
-            this.price = 0.0f;
         }
 
-        public UserCartItem(String itemId, float price){
+        public UserCartItem(String itemId){
             this.itemID = itemId;
-            this.price = price;
         }
     }
 
