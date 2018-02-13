@@ -171,6 +171,12 @@ public class MainScreenActivity extends AppCompatActivity
                 fragment = new WallFragment();
                 break;
 
+            case R.id.nav_add_songs:
+                mainToolBar.setTitle(R.string.bar_text_add_songs);
+                Log.d("GUI", "User Pressed Add Songs Button!");
+                fragment = new AddSongsFragment();
+                break;
+
             case R.id.nav_search:
                 mainToolBar.setTitle(R.string.bar_text_lookup);
                 break;

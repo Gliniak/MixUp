@@ -26,7 +26,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-//import android.widget.ExpandableListAdapter;
 
 /**
  * Created by Gliniak on 09.01.2018.
