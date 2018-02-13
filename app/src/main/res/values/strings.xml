@@ -36,6 +36,7 @@
     <string name="action_settings">Settings</string>
 
     <string name="bar_text_wall">Wall</string>
+    <string name="bar_text_add_songs">Add your music</string>
     <string name="bar_text_lookup">Discover Music</string>
     <string name="bar_text_chat">Chat</string>
     <string name="bar_text_settings">Settings</string>
