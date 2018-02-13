@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +40,7 @@ public class MyProfileFragment extends Fragment {
     private Button show_songs;
 
     private RecyclerView songs_view;
+    private SwipeRefreshLayout songs_view_refresh;
 
     private List<FirebaseDatabaseObject.DatabaseSongs> songsList = new ArrayList<>();
     private DatabaseSongsAdapter mAdapter;
@@ -72,11 +74,8 @@ public class MyProfileFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance();
 
         dummy_song_button = (Button) getView().findViewById(R.id.generate_dummy_songs);
-        show_songs = (Button) getView().findViewById(R.id.show_songs);
-
-
         songs_view = (RecyclerView) getView().findViewById(R.id.songs_view);
-
+        songs_view_refresh = getView().findViewById(R.id.swipeRefreshLayout);
 
         TextView userMail = (TextView) getView().findViewById(R.id.user_email);
 
@@ -99,6 +98,7 @@ public class MyProfileFragment extends Fragment {
         songs_view.setLayoutManager(mLayoutManager);
         songs_view.setItemAnimator(new DefaultItemAnimator());
         songs_view.setAdapter(mAdapter);
+        LoadSongsData();
 
         dummy_song_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,36 +114,42 @@ public class MyProfileFragment extends Fragment {
             }
         });
 
-        show_songs.setOnClickListener(new View.OnClickListener() {
+        songs_view_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onClick(View v)
-            {
-                Log.d("GUI", "show_songs");
-                Query songsQuery = mDatabase.getReference().child("Songs");
-
-                songsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for(DataSnapshot singleSnapshot : dataSnapshot.getChildren())
-                        {
-                            FirebaseDatabaseObject.DatabaseSongs song = FirebaseDatabaseObject.DatabaseSongs.ConvertFromSnapshot(singleSnapshot);
-
-                            songsList.add(FirebaseDatabaseObject.DatabaseSongs.ConvertFromSnapshot(singleSnapshot));
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.e("DBFIRE", "onCancelled", databaseError.toException());
-                    }
-                });
+            public void onRefresh() {
+                LoadSongsData();
             }
         });
 
         super.onViewCreated(view, savedInstanceState);
     }
 
+    @Nullable
+    public void LoadSongsData()
+    {
+        songsList.clear();
+
+        Query songsQuery = mDatabase.getReference().child("Songs");
+        songsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("GUI", "show_songs");
+                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren())
+                {
+                    FirebaseDatabaseObject.DatabaseSongs song = FirebaseDatabaseObject.DatabaseSongs.ConvertFromSnapshot(singleSnapshot);
+
+                    songsList.add(FirebaseDatabaseObject.DatabaseSongs.ConvertFromSnapshot(singleSnapshot));
+                    mAdapter.notifyDataSetChanged();
+                }
+                songs_view_refresh.setRefreshing(false);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("DBFIRE", "onCancelled", databaseError.toException());
+            }
+        });
+    }
 }
 
 
