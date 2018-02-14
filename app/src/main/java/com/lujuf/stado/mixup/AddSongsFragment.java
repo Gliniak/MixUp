@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,7 +58,6 @@ public class AddSongsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.fragment_add_songs, container, false);
       //  ExpandableListView listView = (ExpandableListView)rootView.findViewById(R.id.elv);
         initData();
@@ -104,9 +105,6 @@ public class AddSongsFragment extends Fragment {
         add_song.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("GUI", "Add_song_button");
-                String newSongId = mDatabase.getReference().child("Songs").push().getKey();
-
                 EditText etArtist = (EditText)getView().findViewById(R.id.etArtist);
                 String author = etArtist.getText().toString();
                 EditText etAlbum = (EditText)getView().findViewById(R.id.etAlbum);
@@ -118,15 +116,55 @@ public class AddSongsFragment extends Fragment {
                 Spinner spGenre = (Spinner)getView().findViewById(R.id.spinner);
                 String genre = spGenre.getSelectedItem().toString();
                 //EditText etGenre = (EditText)getView().findViewById(R.id.etGenre);
-              //  int genre =Integer.parseInt(etGenre.getText().toString());
-                EditText etPrice = (EditText)getView().findViewById(R.id.etPrice);
-                float price = Float.parseFloat(etPrice.getText().toString());
+                //  int genre =Integer.parseInt(etGenre.getText().toString());
 
-                FirebaseDatabaseObject.DatabaseSongs defaultSong;
-                defaultSong = new FirebaseDatabaseObject.DatabaseSongs(newSongId, author, album, name, link, genre, 1, price);
 
-                mDatabase.getReference().child("Songs").child(newSongId).setValue(defaultSong.GetSongData());
-                mDatabase.getReference().push();
+               // String helper = etPrice.getText().toString();
+
+                if( TextUtils.isEmpty(etArtist.getText())){
+
+
+                    etArtist.setError( "Artist pseudonym is required!" );
+
+                }
+               if( TextUtils.isEmpty(etAlbum.getText())){
+
+                    etAlbum.setError( "Album name is required!" );
+
+                }
+               if( TextUtils.isEmpty(etName.getText())){
+
+                    etName.setError( "Song title is required!" );
+
+                }
+               if( TextUtils.isEmpty(etLink.getText())){
+
+                    etLink.setError( "Link is required!" );
+
+                }
+
+                else{
+                    EditText etPrice = (EditText)getView().findViewById(R.id.etPrice);
+                    float price = Float.parseFloat(etPrice.getText().toString());
+
+                    Log.d("GUI", "Add_song_button");
+                    String newSongId = mDatabase.getReference().child("Songs").push().getKey();
+
+                    FirebaseDatabaseObject.DatabaseSongs defaultSong;
+                    defaultSong = new FirebaseDatabaseObject.DatabaseSongs(newSongId, author, album, name, link, genre, 1, price);
+
+                    mDatabase.getReference().child("Songs").child(newSongId).setValue(defaultSong.GetSongData());
+                    mDatabase.getReference().push();
+
+                    Context context = getContext();
+                    CharSequence text = "Song publishing succesfull!";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+
+
             }
         });
 
