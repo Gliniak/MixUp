@@ -122,33 +122,22 @@ public class AddSongsFragment extends Fragment {
                // String helper = etPrice.getText().toString();
 
                 if( TextUtils.isEmpty(etArtist.getText())){
-                    /**
-                     *   You can Toast a message here that the Username is Empty
-                     **/
+
 
                     etArtist.setError( "Artist pseudonym is required!" );
 
                 }
-                else if( TextUtils.isEmpty(etAlbum.getText())){
-                    /**
-                     *   You can Toast a message here that the Username is Empty
-                     **/
+               if( TextUtils.isEmpty(etAlbum.getText())){
 
                     etAlbum.setError( "Album name is required!" );
 
                 }
-                else if( TextUtils.isEmpty(etName.getText())){
-                    /**
-                     *   You can Toast a message here that the Username is Empty
-                     **/
+               if( TextUtils.isEmpty(etName.getText())){
 
                     etName.setError( "Song title is required!" );
 
                 }
-                else if( TextUtils.isEmpty(etLink.getText())){
-                    /**
-                     *   You can Toast a message here that the Username is Empty
-                     **/
+               if( TextUtils.isEmpty(etLink.getText())){
 
                     etLink.setError( "Link is required!" );
 
