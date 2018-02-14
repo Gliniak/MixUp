@@ -79,6 +79,7 @@ public class UserCartFragment extends Fragment {
         cart_view.setItemAnimator(new DefaultItemAnimator());
         cart_view.setAdapter(mAdapter);
 
+
         cart_view_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -88,6 +89,7 @@ public class UserCartFragment extends Fragment {
         });
 
         LoadCartData();
+
         cart_price.setText(String.valueOf(cartPrice) + " zł");
 
         super.onViewCreated(view, savedInstanceState);
@@ -100,11 +102,15 @@ public class UserCartFragment extends Fragment {
 
         Query cartQuery = mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart");
 
-        cartQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        cartQuery.addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("GUI", "show_songs");
+
+                cartPrice = 0.0f;
+                cartList.clear();
+                Log.d("DB", "Reloading User Cart Songs List");
+
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren())
                 {
                     Query songQuery = mDatabase.getReference().child("Songs").child(singleSnapshot.getKey());
@@ -125,8 +131,6 @@ public class UserCartFragment extends Fragment {
 
                         }
                     });
-
-                   // mAdapter.notifyDataSetChanged();
                 }
                 cart_view_refresh.setRefreshing(false);
             }

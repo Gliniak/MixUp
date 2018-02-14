@@ -51,16 +51,14 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
             mAuth = FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance();
 
-            title_author = (TextView) view.findViewById(R.id.song_list_title_author);
-            song_genre = (TextView) view.findViewById(R.id.song_list_genre);
+            title_author = view.findViewById(R.id.song_list_title_author);
+            song_genre = view.findViewById(R.id.song_list_genre);
 
-            play_song = (ImageButton) view.findViewById(R.id.song_list_play_song);
-            buySong = (ImageButton) view.findViewById(R.id.buy_song);
+            play_song = view.findViewById(R.id.song_list_play_song);
+            buySong = view.findViewById(R.id.buy_song);
 
             listenerRef = new WeakReference<>(listener);
             buySong.setOnClickListener(this);
-
-
         }
 
         @Override
