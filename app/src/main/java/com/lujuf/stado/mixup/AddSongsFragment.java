@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -36,15 +37,6 @@ public class AddSongsFragment extends Fragment {
 
     private Button add_song;
     private List<FirebaseDatabaseObject.DatabaseSongs> songsList = new ArrayList<>();
-
-    private String author;
-    private String album;
-    private String name;
-    private String link;
-    private int genre;
-    private int flags;
-    private float price;
-    private String owner_id;
 
     private DatabaseSongsAdapter mAdapter;
 
@@ -96,6 +88,19 @@ public class AddSongsFragment extends Fragment {
             public void onClick(View v) {
                 Log.d("GUI", "Add_song_button");
                 String newSongId = mDatabase.getReference().child("Songs").push().getKey();
+
+                EditText etArtist = (EditText)getView().findViewById(R.id.etArtist);
+                String author = etArtist.getText().toString();
+                EditText etAlbum = (EditText)getView().findViewById(R.id.etAlbum);
+                String album = etAlbum.getText().toString();
+                EditText etName = (EditText)getView().findViewById(R.id.etName);
+                String name = etName.getText().toString();
+                EditText etLink = (EditText)getView().findViewById(R.id.etLink);
+                String link = etLink.getText().toString();
+                EditText etGenre = (EditText)getView().findViewById(R.id.etGenre);
+                int genre =Integer.parseInt(etGenre.getText().toString());
+                EditText etPrice = (EditText)getView().findViewById(R.id.etPrice);
+                float price = Float.parseFloat(etPrice.getText().toString());
 
                 FirebaseDatabaseObject.DatabaseSongs defaultSong;
                 defaultSong = new FirebaseDatabaseObject.DatabaseSongs(newSongId, author, album, name, link, genre, 1, price);
