@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="spinnerGenres">
+        <item>Alternative</item>
+        <item>Country</item>
+        <item>Classical</item>
+        <item>EDM</item>
+        <item>Electronica</item>
+        <item>Folk Rock</item>
+        <item>Hard Rock</item>
+        <item>Heavy metal</item>
+        <item>Hip-Hop</item>
+        <item>Indie</item>
+        <item>Indie Rock</item>
+        <item>Jazz</item>
+        <item>Latin</item>
+        <item>Metal</item>
+        <item>Oldies</item>
+        <item>Pop</item>
+        <item>Rock</item>
+        <item>Rap</item>
+        <item>R&amp;B</item>
+        <item>Soul</item>
+    </string-array>
+</resources>

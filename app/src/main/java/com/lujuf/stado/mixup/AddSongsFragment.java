@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 
@@ -57,7 +58,7 @@ public class AddSongsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_add_songs, container, false);
-        ExpandableListView listView = (ExpandableListView)rootView.findViewById(R.id.elv);
+      //  ExpandableListView listView = (ExpandableListView)rootView.findViewById(R.id.elv);
         initData();
         ExpandableListAdapter listAdapter = new ExpandableListAdapter(this.getContext(),listDataHeader,listHash);
 
@@ -114,8 +115,10 @@ public class AddSongsFragment extends Fragment {
                 String name = etName.getText().toString();
                 EditText etLink = (EditText)getView().findViewById(R.id.etLink);
                 String link = etLink.getText().toString();
-                EditText etGenre = (EditText)getView().findViewById(R.id.etGenre);
-                int genre =Integer.parseInt(etGenre.getText().toString());
+                Spinner spGenre = (Spinner)getView().findViewById(R.id.spinner);
+                String genre = spGenre.getSelectedItem().toString();
+                //EditText etGenre = (EditText)getView().findViewById(R.id.etGenre);
+              //  int genre =Integer.parseInt(etGenre.getText().toString());
                 EditText etPrice = (EditText)getView().findViewById(R.id.etPrice);
                 float price = Float.parseFloat(etPrice.getText().toString());
 

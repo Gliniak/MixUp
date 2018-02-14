@@ -147,14 +147,11 @@
                 android:inputType="textPersonName"
                 />
 
-            <EditText
-                android:id="@+id/etGenre"
+            <Spinner
+                android:id="@+id/spinner"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ems="10"
-                android:inputType="textPersonName"
-                />
+                android:layout_height="wrap_content"
+                android:entries="@array/spinnerGenres"/>
 
             <EditText
                 android:id="@+id/etAlbum"
@@ -165,11 +162,6 @@
                 android:inputType="textPersonName"
                 />
 
-            <ExpandableListView
-                android:id="@+id/elv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
 
         </LinearLayout>
     </LinearLayout>
