@@ -56,10 +56,6 @@ public class FirebaseDatabaseObject
             FirebaseDatabaseObjectUser user = new FirebaseDatabaseObjectUser();
 
             user = snap.getValue(FirebaseDatabaseObjectUser.class);
-           // user.songs.
-           // song.SongID = snap.getKey();
-           // song.songData = snap.getValue(SongData.class);
-
             return user;
         }
     }

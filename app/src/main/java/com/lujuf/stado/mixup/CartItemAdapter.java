@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,9 +18,7 @@ import java.util.List;
  * Created by Gliniak on 06.02.2018.
  */
 
-
-
-public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdapter.MyViewHolder>
+public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.MyViewHolder>
 {
     public interface ClickListener {
 
@@ -32,46 +30,47 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
     private final ClickListener listener;
     private List<FirebaseDatabaseObject.DatabaseSongs> songsList;
 
-    private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
+    private FirebaseAuth mAuth;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView title_author;
-        public TextView song_genre;
 
-        public ImageButton play_song;
-        public ImageButton buySong;
+        public Button remove_from_cart;
+        public Button buy_only_this;
+
 
         private WeakReference<ClickListener> listenerRef;
 
         public MyViewHolder(View view, ClickListener listener) {
             super(view);
 
-            mAuth = FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance();
+            mAuth = FirebaseAuth.getInstance();
 
-            title_author = (TextView) view.findViewById(R.id.song_list_title_author);
-            song_genre = (TextView) view.findViewById(R.id.song_list_genre);
+            title_author = view.findViewById(R.id.song_list_title_author);
 
-            play_song = (ImageButton) view.findViewById(R.id.song_list_play_song);
-            buySong = (ImageButton) view.findViewById(R.id.buy_song);
+            remove_from_cart = view.findViewById(R.id.remove_from_cart);
+            buy_only_this = view.findViewById(R.id.buy_item_from_cart);
 
             listenerRef = new WeakReference<>(listener);
-            buySong.setOnClickListener(this);
-
-
+            remove_from_cart.setOnClickListener(this);
+            buy_only_this.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
 
-            if (v.getId() == buySong.getId()) {
-                FirebaseDatabaseObject.DatabaseSongs song = songsList.get(getAdapterPosition());
-                Toast.makeText(v.getContext(), "You Added A new song to your Cart: " + song.songData.Name, Toast.LENGTH_SHORT).show();
 
-                mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").child(song.SongID).getRef().removeValue();
-                mDatabase.getReference().push();
+            if (v.getId() == remove_from_cart.getId()) {
+                FirebaseDatabaseObject.DatabaseSongs song = songsList.get(getAdapterPosition());
+                Toast.makeText(v.getContext(), "You removed a song from your Cart: " + song.songData.Name, Toast.LENGTH_SHORT).show();
+
+                // Why it removes wrong one?
+                songsList.remove(song);
+
+                mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").child(song.SongID).removeValue();
 
             } else {
                 //Toast.makeText(v.getContext(), "ROW PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
@@ -82,7 +81,7 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
     }
 
 
-    public DatabaseSongsAdapter(List<FirebaseDatabaseObject.DatabaseSongs> songsList, ClickListener listener) {
+    public CartItemAdapter(List<FirebaseDatabaseObject.DatabaseSongs> songsList, ClickListener listener) {
         this.songsList = songsList;
         this.listener = listener;
     }
@@ -90,7 +89,7 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.song_list_row, parent, false);
+                .inflate(R.layout.cart_list_row, parent, false);
 
         return new MyViewHolder(itemView, new ClickListener() {
             @Override
@@ -110,10 +109,15 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
         FirebaseDatabaseObject.DatabaseSongs song = songsList.get(position);
 
         holder.title_author.setText(song.GetSongData().GetSongTitle());
+
+        if(song.GetSongData().price == 0.0f)
+            holder.buy_only_this.setText("Free");
+        else holder.buy_only_this.setText(String.valueOf(song.GetSongData().price) + " zł");
     }
 
     @Override
     public int getItemCount() {
         return songsList.size();
     }
+
 }
