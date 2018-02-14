@@ -70,7 +70,7 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
                 FirebaseDatabaseObject.DatabaseSongs song = songsList.get(getAdapterPosition());
                 Toast.makeText(v.getContext(), "You Added A new song to your Cart: " + song.songData.Name, Toast.LENGTH_SHORT).show();
 
-                mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").child(song.SongID).getRef().removeValue();
+                mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").child(song.SongID).setValue("");
                 mDatabase.getReference().push();
 
             } else {
