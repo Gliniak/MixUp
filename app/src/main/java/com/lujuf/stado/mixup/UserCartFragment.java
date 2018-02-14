@@ -1,5 +1,6 @@
 package com.lujuf.stado.mixup;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,7 +21,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.paypal.android.sdk.payments.PayPalConfiguration;
+import com.paypal.android.sdk.payments.PayPalPayment;
+import com.paypal.android.sdk.payments.PayPalPaymentDetails;
+import com.paypal.android.sdk.payments.PayPalService;
+import com.paypal.android.sdk.payments.PaymentActivity;
+import com.paypal.android.sdk.payments.PaymentConfirmation;
 
+import org.json.JSONException;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,11 +40,16 @@ import java.util.List;
 
 public class UserCartFragment extends Fragment {
 
+    private static PayPalConfiguration config = new PayPalConfiguration()
+            .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
+            .clientId(Config.PAYPAL_CLIENT_ID);
+
     private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
 
     private float cartPrice;
     private EditText cart_price;
+    private Button buy_all;
 
     private RecyclerView cart_view;
     private SwipeRefreshLayout cart_view_refresh;
@@ -51,12 +67,18 @@ public class UserCartFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
+        Intent intent = new Intent(this.getContext(), PayPalService.class);
+        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+
+        this.getContext().startService(intent);
+
         cartPrice = 0.0f;
 
         mDatabase = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
         cart_price = view.findViewById(R.id.cart_price);
+        buy_all = getView().findViewById(R.id.buy_all);
 
         cart_view = getView().findViewById(R.id.cart_elements_view);
         cart_view_refresh = getView().findViewById(R.id.swipeRefreshLayout);
@@ -79,6 +101,12 @@ public class UserCartFragment extends Fragment {
         cart_view.setItemAnimator(new DefaultItemAnimator());
         cart_view.setAdapter(mAdapter);
 
+        buy_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                processPayment();
+            }
+        });
 
         cart_view_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -139,6 +167,43 @@ public class UserCartFragment extends Fragment {
                 Log.e("DBFIRE", "onCancelled", databaseError.toException());
             }
         });
+    }
+
+    public void processPayment()
+    {
+        PayPalPayment payment = new PayPalPayment(new BigDecimal(String.valueOf(cartPrice)), "PLN", "Payment For Songs", PayPalPayment.PAYMENT_INTENT_SALE);
+        Intent intent = new Intent(this.getContext(), PaymentActivity.class);
+        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+        intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
+        startActivityForResult(intent, 7171);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 7171)
+        {
+            if(resultCode == 1)
+            {
+                PaymentConfirmation confirmation = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
+
+                if(confirmation != null)
+                {
+                    try
+                    {
+                        String paymentDetails = confirmation.toJSONObject().toString(4);
+
+
+                        startActivity(new Intent(this.getContext(), PayPalPaymentDetails.class));
+
+                    } catch (JSONException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 
 }

@@ -107,6 +107,33 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
     public void onBindViewHolder(MyViewHolder holder, int position) {
         FirebaseDatabaseObject.DatabaseSongs song = songsList.get(position);
 
+        //mDatabase.
+        //DataSnapshot snap = mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").child(song.SongID);
+
+        //boolean equals = mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").equals(song);
+        boolean equals = mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").child(song.SongID).getKey() == song.SongID;
+
+        //if(equals)
+        //{
+           // holder.buySong.setEnabled(false);
+            //holder.buySong.setAlpha(0.0f);
+        //}
+        /*
+        mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").equalTo(song.SongID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot==null || dataSnapshot.getChildren()==null)
+                    return;
+
+                holder.buySong.setEnabled(false);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        */
         holder.title_author.setText(song.GetSongData().GetSongTitle());
     }
 
