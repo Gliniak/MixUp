@@ -3,6 +3,7 @@ package com.lujuf.stado.mixup;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -60,6 +61,24 @@ public class FirebaseDatabaseObject
         }
     }
 
+    @IgnoreExtraProperties
+    public static class UserPendingPayments
+    {
+        public List<String> elements;
+
+        public UserPendingPayments()
+        {
+            elements = new ArrayList<String>();
+        }
+
+        public static UserPendingPayments ConvertFromSnapshot(DataSnapshot snap)
+        {
+            UserPendingPayments payment = new UserPendingPayments();
+            payment.elements = snap.getValue(ArrayList.class);
+
+            return payment;
+        }
+    }
 
     @IgnoreExtraProperties
     public static class UserCartItem

@@ -18,13 +18,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,12 +77,10 @@ public class AddSongsFragment extends Fragment {
 
         mDatabase = FirebaseDatabase.getInstance();
 
-        add_song = (Button) getView().findViewById(R.id.add_song_button);
+        add_song = getView().findViewById(R.id.add_song_button);
 
-        TextView userMail = (TextView) getView().findViewById(R.id.user_email);
-
+        TextView userMail = getView().findViewById(R.id.user_email);
         FirebaseAuth auth = FirebaseAuth.getInstance();
-      //  userMail.setText(auth.getCurrentUser().getEmail());
 
         mAdapter = new DatabaseSongsAdapter(songsList, new DatabaseSongsAdapter.ClickListener() {
             @Override

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -23,7 +24,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
-import com.paypal.android.sdk.payments.PayPalPaymentDetails;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
@@ -44,6 +44,9 @@ public class UserCartFragment extends Fragment {
             .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
             .clientId(Config.PAYPAL_CLIENT_ID);
 
+    // For Special Usage
+    private String currentPaymentID;
+
     private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
 
@@ -56,6 +59,8 @@ public class UserCartFragment extends Fragment {
 
     private List<FirebaseDatabaseObject.DatabaseSongs> cartList = new ArrayList<>();
     private CartItemAdapter mAdapter;
+
+
 
     @Nullable
     @Override
@@ -104,6 +109,9 @@ public class UserCartFragment extends Fragment {
         buy_all.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // Add Everything to processing payment
+                AddToPendings("-1");
                 processPayment();
             }
         });
@@ -121,6 +129,13 @@ public class UserCartFragment extends Fragment {
         cart_price.setText(String.valueOf(cartPrice) + " zł");
 
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onDestroy() {
+
+        this.getContext().stopService(new Intent(this.getContext(), PayPalService.class));
+        super.onDestroy();
     }
 
     @Nullable
@@ -171,20 +186,75 @@ public class UserCartFragment extends Fragment {
 
     public void processPayment()
     {
-        PayPalPayment payment = new PayPalPayment(new BigDecimal(String.valueOf(cartPrice)), "PLN", "Payment For Songs", PayPalPayment.PAYMENT_INTENT_SALE);
+        PayPalPayment payment = new PayPalPayment(new BigDecimal(String.valueOf(cartPrice)), "PLN", "Payment ID: " + currentPaymentID, PayPalPayment.PAYMENT_INTENT_SALE);
         Intent intent = new Intent(this.getContext(), PaymentActivity.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
         intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
-        startActivityForResult(intent, 7171);
+        startActivityForResult(intent, Config.PAYPAL_REQUEST_CODE);
+    }
+
+    public void AddToPendings(String id)
+    {
+        if(id == "-1")
+        {
+            currentPaymentID = mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").push().getKey();
+
+            FirebaseDatabaseObject.UserPendingPayments payment;
+            payment = new FirebaseDatabaseObject.UserPendingPayments();
+
+            for (FirebaseDatabaseObject.DatabaseSongs song: cartList) {
+                payment.elements.add(song.GetSongID());
+            }
+            // Add All
+            mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(currentPaymentID).setValue(payment);
+            mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").push();
+        }
+    }
+
+    public void RemoveItemsFromCartByPendingList(String paymentid)
+    {
+
+
+        Query paymentItems = mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(paymentid);
+
+        paymentItems.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren())
+                {
+                    FirebaseDatabaseObject.UserPendingPayments payment = FirebaseDatabaseObject.UserPendingPayments.ConvertFromSnapshot(snapshot);
+
+                    for (String id: payment.elements)
+                    {
+                        mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").child(id).removeValue();
+                    }
+                    // We need to remove them from local and database cart
+
+
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        //for (FirebaseDatabaseObject.DatabaseSongs song: cartList) {
+        //        payment.elements.add(song.GetSongID());
+         //   }
+            // Add All
+            mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(paymentid).removeValue();
+            //mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").push();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == 7171)
+        if(requestCode == Config.PAYPAL_REQUEST_CODE)
         {
-            if(resultCode == 1)
+            if(resultCode == -1)
             {
                 PaymentConfirmation confirmation = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
 
@@ -194,15 +264,22 @@ public class UserCartFragment extends Fragment {
                     {
                         String paymentDetails = confirmation.toJSONObject().toString(4);
 
+                        RemoveItemsFromCartByPendingList(currentPaymentID);
 
-                        startActivity(new Intent(this.getContext(), PayPalPaymentDetails.class));
+                        // Need to add here summary activity or something
+
+                        Toast.makeText(this.getContext(), "Payment Accepted", Toast.LENGTH_SHORT).show();
+                       // startActivity(new Intent(this.getContext(), PaymentDetails.class)
+                        //        .putExtra("PaymentDetails", paymentDetails)
+                        //        .putExtra("PaymentAmount", String.valueOf(cartPrice)));
+
 
                     } catch (JSONException e)
                     {
                         e.printStackTrace();
                     }
                 }
-            }
+            }else Toast.makeText(this.getContext(), "Cancel", Toast.LENGTH_SHORT).show();
         }
     }
 
