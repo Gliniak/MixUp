@@ -1,4 +1,4 @@
-package com.lujuf.stado.mixup;
+package com.lujuf.stado.mixup.Objects;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.IgnoreExtraProperties;

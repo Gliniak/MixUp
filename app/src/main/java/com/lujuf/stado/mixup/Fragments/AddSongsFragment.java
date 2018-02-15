@@ -1,4 +1,4 @@
-package com.lujuf.stado.mixup;
+package com.lujuf.stado.mixup.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -20,6 +20,10 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.lujuf.stado.mixup.Adapters.DatabaseSongsAdapter;
+import com.lujuf.stado.mixup.Adapters.ExpandableListAdapter;
+import com.lujuf.stado.mixup.Objects.FirebaseDatabaseObject;
+import com.lujuf.stado.mixup.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;

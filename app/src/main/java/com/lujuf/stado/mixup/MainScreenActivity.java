@@ -26,6 +26,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.lujuf.stado.mixup.Fragments.AddSongsFragment;
+import com.lujuf.stado.mixup.Fragments.AppSettingsFragment;
+import com.lujuf.stado.mixup.Fragments.MyProfileFragment;
+import com.lujuf.stado.mixup.Fragments.SearchFragment;
+import com.lujuf.stado.mixup.Fragments.UserCartFragment;
+import com.lujuf.stado.mixup.Fragments.WallFragment;
 
 
 // DO A FUC%$N CLEANUP SOON OK BRO?

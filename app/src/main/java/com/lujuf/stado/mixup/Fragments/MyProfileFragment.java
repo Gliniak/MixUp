@@ -1,4 +1,4 @@
-package com.lujuf.stado.mixup;
+package com.lujuf.stado.mixup.Fragments;
 
 
 import android.content.Context;
@@ -22,6 +22,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.lujuf.stado.mixup.Adapters.DatabaseSongsAdapter;
+import com.lujuf.stado.mixup.Objects.FirebaseDatabaseObject;
+import com.lujuf.stado.mixup.R;
 
 import java.util.ArrayList;
 import java.util.List;

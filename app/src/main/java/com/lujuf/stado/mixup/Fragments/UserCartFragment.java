@@ -1,4 +1,4 @@
-package com.lujuf.stado.mixup;
+package com.lujuf.stado.mixup.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +22,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.lujuf.stado.mixup.Adapters.CartItemAdapter;
+import com.lujuf.stado.mixup.Database.Config;
+import com.lujuf.stado.mixup.Objects.FirebaseDatabaseObject;
+import com.lujuf.stado.mixup.R;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
@@ -202,32 +206,35 @@ public class UserCartFragment extends Fragment {
             FirebaseDatabaseObject.UserPendingPayments payment;
             payment = new FirebaseDatabaseObject.UserPendingPayments();
 
-            for (FirebaseDatabaseObject.DatabaseSongs song: cartList) {
+            mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(currentPaymentID).push();
+
+            for (FirebaseDatabaseObject.DatabaseSongs song : cartList) {
                 payment.elements.add(song.GetSongID());
+
+
+                mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(currentPaymentID).child(song.GetSongID()).setValue("");
             }
             // Add All
-            mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(currentPaymentID).setValue(payment.elements);
-            mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").push();
+           // mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").push();
         }
     }
 
     public void RemoveItemsFromCartByPendingList(String paymentid, boolean rejected)
     {
-        if(rejected == false) {
+        if(rejected == false)
+        {
             Query paymentItems = mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(paymentid);
 
-            paymentItems.addListenerForSingleValueEvent(new ValueEventListener() {
+            ValueEventListener paymentValues = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    // WHY YU HAV 0 !?!
                     Log.d("LOG", "Amount Of elements in payment: " + dataSnapshot.getChildrenCount());
 
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        Log.d("LOG", "Removing element from cart: " + snapshot.getValue() + " For User: " + mAuth.getUid());
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren())
+                    {
+                        Log.d("LOG", "Removing element from cart: " + snapshot.getKey() + " For User: " + mAuth.getUid());
                         mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").child(snapshot.getKey()).removeValue();
-                        // We need to remove them from local and database cart
-
+                        mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(snapshot.getRef().getParent().getKey()).child(snapshot.getKey()).removeValue();
                     }
                 }
 
@@ -235,10 +242,12 @@ public class UserCartFragment extends Fragment {
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
-            });
+            };
+
+            // Really needed?
+            paymentItems.addListenerForSingleValueEvent(paymentValues);
+            paymentItems.removeEventListener(paymentValues);
         }
-        mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(paymentid).removeValue();
-        //mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").push();
     }
 
     @Override
@@ -262,7 +271,9 @@ public class UserCartFragment extends Fragment {
                         // Need to add here summary activity or something
 
                         Toast.makeText(this.getContext(), "Payment Accepted", Toast.LENGTH_SHORT).show();
-                       // startActivity(new Intent(this.getContext(), PaymentDetails.class)
+
+                        // mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(currentPaymentID).removeValue();
+                        // startActivity(new Intent(this.getContext(), PaymentDetails.class)
                         //        .putExtra("PaymentDetails", paymentDetails)
                         //        .putExtra("PaymentAmount", String.valueOf(cartPrice)));
 

@@ -1,4 +1,4 @@
-package com.lujuf.stado.mixup;
+package com.lujuf.stado.mixup.Fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,18 +7,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.lujuf.stado.mixup.R;
+
 /**
- * Created by Gliniak on 08.01.2018.
+ * Created by Dnl on 15.02.2018.
  */
 
-public class AppSettingsFragment extends Fragment {
+public class SearchFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
-        return inflater.inflate(R.layout.fragment_app_settings, container, false);
+        return inflater.inflate(R.layout.fragment_search, container, false);
     }
-
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)

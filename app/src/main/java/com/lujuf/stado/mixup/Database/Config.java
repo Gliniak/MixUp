@@ -1,4 +1,4 @@
-package com.lujuf.stado.mixup;
+package com.lujuf.stado.mixup.Database;
 
 /**
  * Created by Gliniak on 14.02.2018.
