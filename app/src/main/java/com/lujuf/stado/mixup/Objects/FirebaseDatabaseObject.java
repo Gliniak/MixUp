@@ -81,6 +81,24 @@ public class FirebaseDatabaseObject
     }
 
     @IgnoreExtraProperties
+    public static class UserOrderHistoryElement
+    {
+        public String timeStamp;
+        public float price;
+
+        public List<String> buyedSongs;
+
+        public UserOrderHistoryElement(){buyedSongs = new ArrayList<String>(); }
+    }
+
+    public static class UserLibrarySongs
+    {
+        public List<String> songList;
+
+        public UserLibrarySongs(){songList = new ArrayList<String>(); }
+    }
+
+    @IgnoreExtraProperties
     public static class UserCartItem
     {
         public String itemID; // Aka. Song or Album

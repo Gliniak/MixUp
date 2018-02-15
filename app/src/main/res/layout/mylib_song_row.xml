@@ -11,8 +11,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
@@ -31,7 +31,7 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/buy_song"
+        android:id="@+id/download_song"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,17 +39,18 @@
         android:layout_margin="0dp"
         android:padding="4dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_add_shopping_cart_black_24dp" />
+        android:src="@drawable/ic_get_app_black_24dp" />
 
     <ImageButton
-        android:id="@+id/song_list_play_song"
+        android:id="@+id/mylib_play_song"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
-        android:layout_toStartOf="@id/buy_song"
+        android:layout_toStartOf="@id/download_song"
         android:padding="4dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_play_circle_filled_black_24dp" />
+
 
 </RelativeLayout>

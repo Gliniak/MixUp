@@ -24,6 +24,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.lujuf.stado.mixup.Adapters.CartItemAdapter;
 import com.lujuf.stado.mixup.Database.Config;
+import com.lujuf.stado.mixup.Database.FirebaseQueries;
 import com.lujuf.stado.mixup.Objects.FirebaseDatabaseObject;
 import com.lujuf.stado.mixup.R;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
@@ -36,6 +37,7 @@ import org.json.JSONException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -146,8 +148,7 @@ public class UserCartFragment extends Fragment {
     public void LoadCartData()
     {
         cartList.clear();
-
-        Query cartQuery = mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart");
+        Query cartQuery = FirebaseQueries.GetUserCart(mDatabase, mAuth.getUid());
 
         cartQuery.addValueEventListener(new ValueEventListener() {
 
@@ -170,7 +171,7 @@ public class UserCartFragment extends Fragment {
                             cartPrice += song.GetSongData().price;
                             cartList.add(song);
                             cart_price.setText(String.valueOf(cartPrice) + " zł");
-                            mAdapter.notifyDataSetChanged();
+
                         }
 
                         @Override
@@ -179,6 +180,7 @@ public class UserCartFragment extends Fragment {
                         }
                     });
                 }
+                mAdapter.notifyDataSetChanged();
                 cart_view_refresh.setRefreshing(false);
             }
             @Override
@@ -201,21 +203,18 @@ public class UserCartFragment extends Fragment {
     {
         if(id == "-1")
         {
-            currentPaymentID = mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").push().getKey();
+            currentPaymentID = FirebaseQueries.GetPaymentID(mDatabase, mAuth.getUid()); // .getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").push().getKey();
 
             FirebaseDatabaseObject.UserPendingPayments payment;
             payment = new FirebaseDatabaseObject.UserPendingPayments();
 
-            mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(currentPaymentID).push();
+            //mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(currentPaymentID).push();
 
             for (FirebaseDatabaseObject.DatabaseSongs song : cartList) {
                 payment.elements.add(song.GetSongID());
 
-
-                mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(currentPaymentID).child(song.GetSongID()).setValue("");
+                FirebaseQueries.AddNewItemToPendingPayment(mDatabase, mAuth.getUid(), currentPaymentID, song.GetSongID());
             }
-            // Add All
-           // mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").push();
         }
     }
 
@@ -223,19 +222,31 @@ public class UserCartFragment extends Fragment {
     {
         if(rejected == false)
         {
-            Query paymentItems = mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(paymentid);
+            Query paymentItems = FirebaseQueries.GetPaymentQuery(mDatabase, mAuth.getUid(), paymentid);
 
             ValueEventListener paymentValues = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Log.d("LOG", "Amount Of elements in payment: " + dataSnapshot.getChildrenCount());
 
+                    final FirebaseDatabaseObject.UserOrderHistoryElement order = new FirebaseDatabaseObject.UserOrderHistoryElement();
+                    order.timeStamp = Calendar.getInstance().getTime().toString();
+                    order.price = cartPrice;
+
                     for (DataSnapshot snapshot : dataSnapshot.getChildren())
                     {
                         Log.d("LOG", "Removing element from cart: " + snapshot.getKey() + " For User: " + mAuth.getUid());
+
+                        order.buyedSongs.add(snapshot.getKey());
+
+                        FirebaseQueries.AddSongToUser(mDatabase, mAuth.getUid(), snapshot.getKey());
+
                         mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").child(snapshot.getKey()).removeValue();
                         mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(snapshot.getRef().getParent().getKey()).child(snapshot.getKey()).removeValue();
                     }
+
+                    // After Data Read
+                    mDatabase.getReference().child("Users").child(mAuth.getUid()).child("OrderHistory").child(dataSnapshot.getKey()).setValue(order);
                 }
 
                 @Override
@@ -246,7 +257,6 @@ public class UserCartFragment extends Fragment {
 
             // Really needed?
             paymentItems.addListenerForSingleValueEvent(paymentValues);
-            paymentItems.removeEventListener(paymentValues);
         }
     }
 

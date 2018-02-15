@@ -1,5 +1,7 @@
 package com.lujuf.stado.mixup.Fragments;
 
+
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,7 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.lujuf.stado.mixup.Adapters.MyLibraryAdapter;
+import com.lujuf.stado.mixup.Adapters.DatabaseSongsAdapter;
 import com.lujuf.stado.mixup.Database.FirebaseQueries;
 import com.lujuf.stado.mixup.Objects.FirebaseDatabaseObject;
 import com.lujuf.stado.mixup.R;
@@ -26,11 +28,12 @@ import com.lujuf.stado.mixup.R;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * Created by Dnl on 15.02.2018.
+ * Created by Gliniak on 09.01.2018.
  */
 
-public class MyLibFragment extends Fragment {
+public class ExploreFragment extends Fragment {
 
     private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
@@ -39,25 +42,41 @@ public class MyLibFragment extends Fragment {
     private SwipeRefreshLayout songs_view_refresh;
 
     private List<FirebaseDatabaseObject.DatabaseSongs> songsList = new ArrayList<>();
-    private MyLibraryAdapter mAdapter;
+    private DatabaseSongsAdapter mAdapter;
+
+    @Override
+    public void onAttach(Context context) {
+        Log.d("GUI", "Avatar onAttach!");
+        // TODO Auto-generated method stub
+        super.onAttach(context);
+        //context=context;
+    }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
-        return inflater.inflate(R.layout.fragment_my_lib, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.fragment_explore, container, false);
+        return rootView;
     }
 
+    //@Override
+    //public void onAttach(Context context) {
+    //    super.onAttach(context);
+    // }
+
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
-    {
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
         mDatabase = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        songs_view = getView().findViewById(R.id.mylib_elements_view);
+        songs_view = getView().findViewById(R.id.songs_view);
         songs_view_refresh = getView().findViewById(R.id.swipeRefreshLayout);
 
-        mAdapter = new MyLibraryAdapter(songsList, new MyLibraryAdapter.ClickListener() {
+        mAdapter = new DatabaseSongsAdapter(songsList, new DatabaseSongsAdapter.ClickListener() {
             @Override
             public void onPositionClicked(int position) {
 
@@ -68,13 +87,11 @@ public class MyLibFragment extends Fragment {
 
             }
         });
-
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
 
         songs_view.setLayoutManager(mLayoutManager);
         songs_view.setItemAnimator(new DefaultItemAnimator());
         songs_view.setAdapter(mAdapter);
-
         LoadSongsData();
 
         songs_view_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -87,38 +104,28 @@ public class MyLibFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-
     @Nullable
     public void LoadSongsData()
     {
         songsList.clear();
 
-        Query myLibSongsQuery = FirebaseQueries.GetUserSongs(mDatabase, mAuth.getUid());
+        Query songsQuery = FirebaseQueries.GetSongs(mDatabase);
 
-        myLibSongsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        songsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("DB", "Load User Songs List");
+                Log.d("GUI", "show_songs");
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren())
                 {
-                    Query songQuery = FirebaseQueries.GetSong(mDatabase, singleSnapshot.getKey());
+                    FirebaseDatabaseObject.DatabaseSongs song = FirebaseDatabaseObject.DatabaseSongs.ConvertFromSnapshot(singleSnapshot);
 
-                    songQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot)
-                        {
-                            FirebaseDatabaseObject.DatabaseSongs song = FirebaseDatabaseObject.DatabaseSongs.ConvertFromSnapshot(dataSnapshot);
-                            songsList.add(song);
-                            mAdapter.notifyDataSetChanged();
-                        }
+                    // Any Idea how to implement this in simple way?
+                    Query isInUserLib = FirebaseQueries.GetUserSong(mDatabase, mAuth.getUid(), song.SongID);
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
-
+                    songsList.add(FirebaseDatabaseObject.DatabaseSongs.ConvertFromSnapshot(singleSnapshot));
+                    mAdapter.notifyDataSetChanged();
                 }
                 songs_view_refresh.setRefreshing(false);
             }
@@ -128,4 +135,7 @@ public class MyLibFragment extends Fragment {
             }
         });
     }
+
 }
+
+

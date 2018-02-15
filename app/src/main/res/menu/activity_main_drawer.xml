@@ -6,20 +6,22 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_my_lib"
+            android:title="My Library" />
+        <item
+            android:id="@+id/nav_explore"
+            android:title="Explore" />
+        <item
             android:id="@+id/nav_wall"
             android:title="Wall" />
         <item
-            android:id="@+id/nav_my_lib"
+            android:id="@+id/nav_my_songs"
             android:title="My Songs" />
-        <item
-            android:id="@+id/nav_search"
-            android:title="Search" />
+
         <item
             android:id="@+id/nav_slideshow"
             android:title="Top List" />
-        <item
-            android:id="@+id/nav_manage"
-            android:title="My Library" />
+
         <item
             android:id="@+id/nav_add_songs"
             android:title="Add songs"

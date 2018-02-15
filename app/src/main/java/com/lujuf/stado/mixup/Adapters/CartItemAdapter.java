@@ -82,7 +82,8 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.MyView
                 //Toast.makeText(v.getContext(), "ROW PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
             }
 
-            listenerRef.get().onPositionClicked(getAdapterPosition());
+            if(listenerRef != null && listenerRef.get() != null)
+                listenerRef.get().onPositionClicked(getAdapterPosition());
         }
     }
 

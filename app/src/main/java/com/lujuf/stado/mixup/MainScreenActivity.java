@@ -28,8 +28,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.lujuf.stado.mixup.Fragments.AddSongsFragment;
 import com.lujuf.stado.mixup.Fragments.AppSettingsFragment;
+import com.lujuf.stado.mixup.Fragments.MyLibFragment;
 import com.lujuf.stado.mixup.Fragments.MyProfileFragment;
-import com.lujuf.stado.mixup.Fragments.SearchFragment;
+import com.lujuf.stado.mixup.Fragments.ExploreFragment;
 import com.lujuf.stado.mixup.Fragments.UserCartFragment;
 import com.lujuf.stado.mixup.Fragments.WallFragment;
 
@@ -71,8 +72,8 @@ public class MainScreenActivity extends AppCompatActivity
 
         // Adding Main Bar to Layout
         mainToolBar = findViewById(R.id.toolbar);
-        mainToolBar.setTitle(R.string.bar_text_wall); // Need to do this auto
         setSupportActionBar(mainToolBar);
+        getSupportActionBar().setTitle(R.string.bar_text_wall); // Need to do this auto
 
         userCart = (ImageButton) findViewById(R.id.menu_user_cart);
         cartItems = findViewById(R.id.cart_items_amount);
@@ -90,7 +91,7 @@ public class MainScreenActivity extends AppCompatActivity
                     ft.commit();
                 }
 
-                mainToolBar.setTitle(R.string.bar_text_user_cart);
+                getSupportActionBar().setTitle(R.string.bar_text_user_cart);
             }
         });
 
@@ -182,37 +183,37 @@ public class MainScreenActivity extends AppCompatActivity
         switch(id)
         {
             case R.id.nav_wall:
-                mainToolBar.setTitle(R.string.bar_text_wall);
+                getSupportActionBar().setTitle(R.string.bar_text_wall);
                 Log.d("GUI", "User Pressed Wall Button!");
                 fragment = new WallFragment();
                 break;
 
             case R.id.nav_add_songs:
-                mainToolBar.setTitle(R.string.bar_text_add_songs);
+                getSupportActionBar().setTitle(R.string.bar_text_add_songs);
                 Log.d("GUI", "User Pressed Add Songs Button!");
                 fragment = new AddSongsFragment();
                 break;
 
-            case R.id.nav_search:
+            /*case R.id.nav_search:
                 mainToolBar.setTitle(R.string.bar_text_lookup);
                 Log.d("GUI", "User Pressed Search Button!");
-                fragment = new SearchFragment();
+                fragment = new ExploreFragment();
+                break;
+            */
+            case R.id.nav_my_lib:
+                getSupportActionBar().setTitle("My Library");
+                Log.d("GUI", "User Pressed My library Button!");
+                fragment = new MyLibFragment();
                 break;
 
-            case R.id.nav_manage:
-                mainToolBar.setTitle(R.string.bar_text_lookup);
-                Log.d("GUI", "User Pressed My library Button!");
-                fragment = new SearchFragment();
-                break;
-
-            case R.id.nav_slideshow:
-                mainToolBar.setTitle(R.string.bar_text_lookup);
-                Log.d("GUI", "User Pressed My library Button!");
-                fragment = new SearchFragment();
+            case R.id.nav_explore:
+                getSupportActionBar().setTitle("Explore");
+                Log.d("GUI", "User Pressed Explore Button!");
+                fragment = new ExploreFragment();
                 break;
 
             case R.id.nav_app_settings:
-                mainToolBar.setTitle(R.string.bar_text_settings);
+                getSupportActionBar().setTitle(R.string.bar_text_settings);
                 fragment = new AppSettingsFragment();
                 break;
             case R.id.nav_logout:
