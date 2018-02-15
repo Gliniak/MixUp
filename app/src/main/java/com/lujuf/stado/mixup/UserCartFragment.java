@@ -206,46 +206,39 @@ public class UserCartFragment extends Fragment {
                 payment.elements.add(song.GetSongID());
             }
             // Add All
-            mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(currentPaymentID).setValue(payment);
+            mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(currentPaymentID).setValue(payment.elements);
             mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").push();
         }
     }
 
-    public void RemoveItemsFromCartByPendingList(String paymentid)
+    public void RemoveItemsFromCartByPendingList(String paymentid, boolean rejected)
     {
+        if(rejected == false) {
+            Query paymentItems = mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(paymentid);
 
+            paymentItems.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-        Query paymentItems = mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(paymentid);
+                    // WHY YU HAV 0 !?!
+                    Log.d("LOG", "Amount Of elements in payment: " + dataSnapshot.getChildrenCount());
 
-        paymentItems.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren())
-                {
-                    FirebaseDatabaseObject.UserPendingPayments payment = FirebaseDatabaseObject.UserPendingPayments.ConvertFromSnapshot(snapshot);
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Log.d("LOG", "Removing element from cart: " + snapshot.getValue() + " For User: " + mAuth.getUid());
+                        mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").child(snapshot.getKey()).removeValue();
+                        // We need to remove them from local and database cart
 
-                    for (String id: payment.elements)
-                    {
-                        mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").child(id).removeValue();
                     }
-                    // We need to remove them from local and database cart
+                }
 
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
                 }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-        //for (FirebaseDatabaseObject.DatabaseSongs song: cartList) {
-        //        payment.elements.add(song.GetSongID());
-         //   }
-            // Add All
-            mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(paymentid).removeValue();
-            //mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").push();
+            });
+        }
+        mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").child(paymentid).removeValue();
+        //mDatabase.getReference().child("Users").child(mAuth.getUid()).child("PaymentsPending").push();
     }
 
     @Override
@@ -264,7 +257,7 @@ public class UserCartFragment extends Fragment {
                     {
                         String paymentDetails = confirmation.toJSONObject().toString(4);
 
-                        RemoveItemsFromCartByPendingList(currentPaymentID);
+                        RemoveItemsFromCartByPendingList(currentPaymentID, false);
 
                         // Need to add here summary activity or something
 
@@ -279,7 +272,11 @@ public class UserCartFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
-            }else Toast.makeText(this.getContext(), "Cancel", Toast.LENGTH_SHORT).show();
+            }else
+            {
+                RemoveItemsFromCartByPendingList(currentPaymentID, true);
+                Toast.makeText(this.getContext(), "Cancel", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
