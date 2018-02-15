@@ -39,7 +39,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.MyView
         public TextView title_author;
 
         public Button remove_from_cart;
-        public Button buy_only_this;
+        public TextView price;
 
 
         private WeakReference<ClickListener> listenerRef;
@@ -53,11 +53,11 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.MyView
             title_author = view.findViewById(R.id.song_list_title_author);
 
             remove_from_cart = view.findViewById(R.id.remove_from_cart);
-            buy_only_this = view.findViewById(R.id.buy_item_from_cart);
+            price = view.findViewById(R.id.price);
 
             listenerRef = new WeakReference<>(listener);
             remove_from_cart.setOnClickListener(this);
-            buy_only_this.setOnClickListener(this);
+         //   price.setOnClickListener(this);
         }
 
         @Override
@@ -115,8 +115,8 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.MyView
         holder.title_author.setText(song.GetSongData().GetSongTitle());
 
         if(song.GetSongData().price == 0.0f)
-            holder.buy_only_this.setText("Free");
-        else holder.buy_only_this.setText(String.valueOf(song.GetSongData().price) + " zł");
+            holder.price.setText("Free");
+       else holder.price.setText(String.valueOf(song.GetSongData().price) + " zł");
     }
 
     @Override
