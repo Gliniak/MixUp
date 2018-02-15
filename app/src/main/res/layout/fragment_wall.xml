@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout_wall"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,16 +11,11 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Wall" />
 
-        <TextView
-            android:id="@+id/textView2"
+        <ImageView
+            android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            app:srcCompat="@drawable/work_ip" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

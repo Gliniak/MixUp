@@ -189,6 +189,20 @@ public class MainScreenActivity extends AppCompatActivity
 
             case R.id.nav_search:
                 mainToolBar.setTitle(R.string.bar_text_lookup);
+                Log.d("GUI", "User Pressed Search Button!");
+                fragment = new SearchFragment();
+                break;
+
+            case R.id.nav_manage:
+                mainToolBar.setTitle(R.string.bar_text_lookup);
+                Log.d("GUI", "User Pressed My library Button!");
+                fragment = new SearchFragment();
+                break;
+
+            case R.id.nav_slideshow:
+                mainToolBar.setTitle(R.string.bar_text_lookup);
+                Log.d("GUI", "User Pressed My library Button!");
+                fragment = new SearchFragment();
                 break;
 
             case R.id.nav_app_settings:
