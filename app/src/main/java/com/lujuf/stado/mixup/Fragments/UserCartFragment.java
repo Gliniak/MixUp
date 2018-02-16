@@ -66,12 +66,19 @@ public class UserCartFragment extends Fragment {
     private List<FirebaseDatabaseObject.DatabaseSongs> cartList = new ArrayList<>();
     private CartItemAdapter mAdapter;
 
+    private List<String> songs;
 
+    private ValueEventListener CartListener;
+    private ValueEventListener SongListener;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
+        mDatabase = FirebaseDatabase.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        LoadCartData();
+
         return inflater.inflate(R.layout.fragment_usercart, container, false);
     }
 
@@ -82,11 +89,6 @@ public class UserCartFragment extends Fragment {
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
 
         this.getContext().startService(intent);
-
-        cartPrice = 0.0f;
-
-        mDatabase = FirebaseDatabase.getInstance();
-        mAuth = FirebaseAuth.getInstance();
 
         cart_price = view.findViewById(R.id.cart_price);
         buy_all = getView().findViewById(R.id.buy_all);
@@ -125,14 +127,9 @@ public class UserCartFragment extends Fragment {
         cart_view_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                cartPrice = 0.0f;
-                LoadCartData();
+                //LoadCartData();
             }
         });
-
-        LoadCartData();
-
-        cart_price.setText(String.valueOf(cartPrice) + " zł");
 
         super.onViewCreated(view, savedInstanceState);
     }
@@ -140,52 +137,87 @@ public class UserCartFragment extends Fragment {
     @Override
     public void onDestroy() {
 
+        // Important lesson!
+        // If we want to remove listener we have to be in the same "place" as we creating listener... #PoorEngrish
+        FirebaseQueries.GetUserCart(mDatabase, mAuth.getUid()).removeEventListener(CartListener);
+
         this.getContext().stopService(new Intent(this.getContext(), PayPalService.class));
         super.onDestroy();
     }
 
     @Nullable
-    public void LoadCartData()
-    {
-        cartList.clear();
+    public void LoadCartData() {
+        //songs = new ArrayList<String>();
+        cartPrice = 0.0f;
+
         Query cartQuery = FirebaseQueries.GetUserCart(mDatabase, mAuth.getUid());
 
-        cartQuery.addValueEventListener(new ValueEventListener() {
-
+        CartListener = cartQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                Log.d("DB", "Reading User Cart...");
+                songs = new ArrayList<String>();
                 cartPrice = 0.0f;
-                cartList.clear();
-                Log.d("DB", "Reloading User Cart Songs List");
 
-                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren())
+                long amount = dataSnapshot.getChildrenCount();
+
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren())
                 {
-                    Query songQuery = mDatabase.getReference().child("Songs").child(singleSnapshot.getKey());
+                    --amount;
+                    songs.add(singleSnapshot.getKey());
 
-                    songQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            FirebaseDatabaseObject.DatabaseSongs song = FirebaseDatabaseObject.DatabaseSongs.ConvertFromSnapshot(dataSnapshot);
-
-                            cartPrice += song.GetSongData().price;
-                            cartList.add(song);
-                            cart_price.setText(String.valueOf(cartPrice) + " zł");
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
+                    // It's quite stupid but it works...
+                    // Any better ideas?
+                    if(amount == 0) {
+                        LoadSongsData();
+                    }
                 }
-                mAdapter.notifyDataSetChanged();
-                cart_view_refresh.setRefreshing(false);
+
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e("DBFIRE", "onCancelled", databaseError.toException());
+
+            }
+        });
+    }
+
+
+    public void LoadSongsData() {
+        cartList.clear();
+        Query songsQuery = FirebaseQueries.GetSongs(mDatabase);
+
+        songsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                cartList.clear();
+                Log.d("DB", "Reading Songs Data...");
+
+                long amount = dataSnapshot.getChildrenCount();
+
+                for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+
+                    --amount;
+                    if(songs.contains(singleSnapshot.getKey())) {
+
+                        FirebaseDatabaseObject.DatabaseSongs song = FirebaseDatabaseObject.DatabaseSongs.ConvertFromSnapshot(singleSnapshot);
+                        cartPrice += song.GetSongData().price;
+                        cartList.add(song);
+                    }
+
+                    if(amount == 0)
+                        FirebaseQueries.GetSongs(mDatabase).removeEventListener(this);
+                }
+
+                cart_price.setText(String.valueOf(cartPrice) + " zł");
+                cart_view_refresh.setRefreshing(false);
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }

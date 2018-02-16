@@ -1,6 +1,5 @@
 package com.lujuf.stado.mixup.Adapters;
 
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +58,6 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.MyView
 
             listenerRef = new WeakReference<>(listener);
             remove_from_cart.setOnClickListener(this);
-         //   price.setOnClickListener(this);
         }
 
         @Override
@@ -70,13 +68,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.MyView
                 FirebaseDatabaseObject.DatabaseSongs song = songsList.get(getAdapterPosition());
                 Toast.makeText(v.getContext(), "You removed a song from your Cart: " + song.songData.Name, Toast.LENGTH_SHORT).show();
 
-                // Why it removes wrong one?
-                //songsList.remove(song);
-
                 mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").child(song.SongID).removeValue();
-
-                SwipeRefreshLayout cart_view = v.getRootView().findViewById(R.id.swipeRefreshLayout);
-                cart_view.setRefreshing(true);
 
             } else {
                 //Toast.makeText(v.getContext(), "ROW PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
