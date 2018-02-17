@@ -88,7 +88,14 @@ public class FirebaseDatabaseObject
 
         public List<String> buyedSongs;
 
-        public UserOrderHistoryElement(){buyedSongs = new ArrayList<String>(); }
+        public UserOrderHistoryElement(){ buyedSongs = new ArrayList<String>(); }
+
+        public static UserOrderHistoryElement ConvertFromSnapshot(DataSnapshot snap)
+        {
+            UserOrderHistoryElement item;
+            item = snap.getValue(UserOrderHistoryElement.class);
+            return item;
+        }
     }
 
     public static class UserLibrarySongs

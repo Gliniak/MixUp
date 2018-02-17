@@ -19,6 +19,8 @@ public class FirebaseQueries  {
     public static void AddSongToUser(FirebaseDatabase db, String UserID, String songID) { db.getReference().child("Users").child(UserID).child("Owned").child(songID).setValue(""); }
 
     //
+    public static Query GetUserOrders(FirebaseDatabase db, String UserID) { return db.getReference().child("Users").child(UserID).child("OrderHistory"); }
+
     public static Query GetPaymentQuery(FirebaseDatabase db, String UserID, String paymentid) { return db.getReference().child("Users").child(UserID).child("PaymentsPending").child(paymentid); }
     public static String GetPaymentID(FirebaseDatabase db, String UserID) { return db.getReference().child("Users").child(UserID).child("PaymentsPending").push().getKey(); }
     public static void AddNewItemToPendingPayment(FirebaseDatabase db, String UserID, String payment, String songId) {

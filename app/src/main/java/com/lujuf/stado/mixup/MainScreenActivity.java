@@ -31,6 +31,7 @@ import com.lujuf.stado.mixup.Fragments.AppSettingsFragment;
 import com.lujuf.stado.mixup.Fragments.MyLibFragment;
 import com.lujuf.stado.mixup.Fragments.MyProfileFragment;
 import com.lujuf.stado.mixup.Fragments.ExploreFragment;
+import com.lujuf.stado.mixup.Fragments.OrdersFragment;
 import com.lujuf.stado.mixup.Fragments.UserCartFragment;
 import com.lujuf.stado.mixup.Fragments.WallFragment;
 
@@ -53,7 +54,9 @@ public class MainScreenActivity extends AppCompatActivity
     private TextView userName;
     private ImageView userAvatar;
 
-    public TextView cartItems;
+    private TextView cartItems;
+
+    private Fragment activeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,6 +219,12 @@ public class MainScreenActivity extends AppCompatActivity
                 getSupportActionBar().setTitle(R.string.bar_text_settings);
                 fragment = new AppSettingsFragment();
                 break;
+
+            case R.id.nav_order_history:
+                getSupportActionBar().setTitle(R.string.bar_text_settings);
+                fragment = new OrdersFragment();
+                break;
+
             case R.id.nav_logout:
                 if (auth.getCurrentUser() != null)
                 {

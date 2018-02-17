@@ -27,6 +27,10 @@
             android:title="Add songs"
             />
 
+        <item
+            android:id="@+id/nav_order_history"
+            android:title="Orders History"
+            />
     </group>
 
     <item android:title="Other">
