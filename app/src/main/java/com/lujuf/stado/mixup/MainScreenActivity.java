@@ -64,6 +64,8 @@ public class MainScreenActivity extends AppCompatActivity
         setContentView(R.layout.activity_mainscreen);
 
         // User Auth Part
+
+        // TODO: Somehow after SHA mismatch application still looks loggedin but in reality it's not authenticated!
         auth = FirebaseAuth.getInstance();
 
         if (auth.getCurrentUser() == null) {

@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -92,8 +93,9 @@ public class ExploreFragment extends Fragment {
         songs_view.setLayoutManager(mLayoutManager);
         songs_view.setItemAnimator(new DefaultItemAnimator());
         songs_view.setAdapter(mAdapter);
-        LoadSongsData();
 
+        LoadSongsData();
+        songs_view.addItemDecoration(new DividerItemDecoration(this.getContext(), LinearLayoutManager.VERTICAL));
         songs_view_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
