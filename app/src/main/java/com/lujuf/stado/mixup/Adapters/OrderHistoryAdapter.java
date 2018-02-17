@@ -93,7 +93,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
 
 
         holder.paymentDate.setText(order.timeStamp);
-        holder.paymentPrice.setText(String.format("%.4g%n", order.price) + "zł");
+        holder.paymentPrice.setText(String.format("%.4g", order.price) + "zł");
 
     }
 
