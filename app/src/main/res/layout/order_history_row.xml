@@ -8,29 +8,25 @@
     android:focusable="true"
     android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin">
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    >
 
     <LinearLayout
+        android:id="@+id/orderRow_Linearlayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
-            android:textSize="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Payment:" />
-
-        <TextView
             android:id="@+id/history_payment_id"
-            android:textSize="16dp"
+            android:textSize="20sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="123121" />
 
         <TextView
             android:id="@+id/history_payment_time"
-            android:textSize="16dp"
+            android:textSize="12sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="21-02-2017" />
@@ -39,10 +35,17 @@
     <TextView
         android:id="@+id/history_payment_price"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="20dp"
-        android:textSize="24dp"
+        android:layout_marginTop="6dp"
+        android:textSize="24sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="399$" />
 
+    <ListView
+        android:id="@+id/history_payment_order_info_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/orderRow_Linearlayout"
+        android:visibility="visible"
+        />
 </RelativeLayout>

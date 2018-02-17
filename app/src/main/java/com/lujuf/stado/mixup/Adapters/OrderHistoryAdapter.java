@@ -1,6 +1,7 @@
 package com.lujuf.stado.mixup.Adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         public TextView paymentDate;
         public TextView paymentPrice;
 
+        //public Button history_payment_test_button;
 
         private WeakReference<ClickListener> listenerRef;
 
@@ -44,12 +46,18 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             paymentId = view.findViewById(R.id.history_payment_id);
             paymentDate = view.findViewById(R.id.history_payment_time);
             paymentPrice = view.findViewById(R.id.history_payment_price);
+            //history_payment_test_button = view.findViewById(R.id.history_payment_test_button);
 
             listenerRef = new WeakReference<>(listener);
         }
 
         @Override
         public void onClick(View v) {
+
+            Log.d("onClick - MyViewHolder", "Pressed OrderId");
+            //if(history_payment_test_button.getVisibility() == View.GONE)
+            //    history_payment_test_button.setVisibility(View.VISIBLE);
+            //else history_payment_test_button.setVisibility(View.GONE);
 
             if(listenerRef != null && listenerRef.get() != null)
                 listenerRef.get().onPositionClicked(getAdapterPosition());

@@ -22,4 +22,11 @@
         <item>R&amp;B</item>
         <item>Soul</item>
     </string-array>
+
+    <string-array name="spinner_sort_songs_by">
+        <item>Newest</item>
+        <item>Most Popular</item>
+        <item>Score</item>
+    </string-array>
+
 </resources>

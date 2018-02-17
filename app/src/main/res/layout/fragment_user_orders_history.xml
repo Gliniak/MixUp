@@ -4,9 +4,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/order_history_elements_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:textSize="26sp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:text="Price" />
+
+        <LinearLayout
+            android:id="@+id/linearLayoutForOrders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:textSize="26sp"
+                android:text="Payment:" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:textSize="12sp"
+                android:layout_marginStart="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Payment Time" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/order_history_elements_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/linearLayoutForOrders" />
+    </RelativeLayout>
+
+
 
 </android.support.constraint.ConstraintLayout>

@@ -37,6 +37,12 @@
             android:layout_marginTop="19dp"
             android:text="Buy All" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/buy_all"
+            android:background="@android:color/darker_gray" />
+
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
             android:layout_below="@+id/buy_all"
