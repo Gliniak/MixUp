@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.lujuf.stado.mixup.R;
@@ -17,6 +18,11 @@ import com.lujuf.stado.mixup.R;
  */
 
 public class PlayerFragment extends Fragment {
+
+    ImageButton prevSong;
+    ImageButton nextSong;
+    ImageButton playSong;
+    ImageButton pauseSong;
 
     @Override
     public void onAttach(Context context) {
@@ -46,6 +52,41 @@ public class PlayerFragment extends Fragment {
 
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         //FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        prevSong = view.findViewById(R.id.player_prev_song);
+        nextSong = view.findViewById(R.id.player_next_song);
+        playSong = view.findViewById(R.id.player_play_button);
+        pauseSong = view.findViewById(R.id.player_stop_button);
+
+        prevSong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("MIXUP - MP3PLAYER:", "Playing Previous Song");
+            }
+        });
+
+        nextSong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("MIXUP - MP3PLAYER:", "Playing Next Song");
+            }
+        });
+
+        playSong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playSong.setVisibility(View.INVISIBLE);
+                pauseSong.setVisibility(View.VISIBLE);
+            }
+        });
+
+        pauseSong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pauseSong.setVisibility(View.INVISIBLE);
+                playSong.setVisibility(View.VISIBLE);
+            }
+        });
 
         super.onViewCreated(view, savedInstanceState);
     }
