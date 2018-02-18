@@ -4,7 +4,6 @@ import android.net.Uri;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.IgnoreExtraProperties;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -228,7 +227,14 @@ public class FirebaseDatabaseObject
             DatabaseSongs song = new DatabaseSongs();
 
             song.SongID = snap.getKey();
-            song.songData = snap.getValue(SongData.class);
+
+            song.songData.AlbumID = snap.child("AlbumID").getValue().toString();
+            song.songData.AuthorID = snap.child("AuthorID").getValue().toString();
+            song.songData.Flags = Integer.parseInt(snap.child("Flags").getValue().toString());
+            song.songData.Name = snap.child("Name").getValue().toString();
+            song.songData.GenreFlags = snap.child("GenreFlags").getValue().toString();
+            song.songData.price = Float.parseFloat(snap.child("price").getValue().toString());
+            song.songData.SongLink = Uri.parse(snap.child("SongLink").getValue().toString());
 
             return song;
         }
