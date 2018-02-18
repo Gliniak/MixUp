@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -210,18 +209,28 @@ public class AddSongsFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==100){
-            selectedUri = data.getData();
-            String path = getPath(getActivity(),selectedUri);
-            mFile = new File(path);
-            upload_song.setEnabled(true);
-            if (null != selectedUri) {
-                // Get the path from the Uri
-                ContentResolver cr = getActivity().getContentResolver();
 
+        if(requestCode==100){
+
+            if(data != null) {
+                selectedUri = data.getData();
+                File sdDir = Environment.getExternalStorageDirectory();
+                String filePath = selectedUri.getPath();
+                // better way?
+                filePath = filePath.replace("/document", "/storage");
+                filePath = filePath.replace(":", "/");
+
+                mFile = new File(filePath);
+
+                upload_song.setEnabled(true);
+                if (null != selectedUri) {
+                    // Get the path from the Uri
+                    ContentResolver cr = getActivity().getContentResolver();
+
+                }
             }
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -256,7 +265,6 @@ public class AddSongsFragment extends Fragment {
 
        super.onCreate(savedInstanceState);
 
-
         mDatabase = FirebaseDatabase.getInstance();
 
         add_song = getView().findViewById(R.id.add_song_button);
@@ -285,13 +293,18 @@ public class AddSongsFragment extends Fragment {
             public void onClick(View v) {
 
                 showProgressDialog();
-                    if (mFile != null && mFile.exists()) {
-                        InputStream stream = null;
-                        try {
-                            stream = new FileInputStream(mFile);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
+
+                boolean fileNotNull = mFile != null;
+                boolean fileExist = mFile.exists();
+                boolean canRead = mFile.canRead();
+
+                if (fileNotNull && fileExist) {
+                    InputStream stream = null;
+                    try {
+                        stream = new FileInputStream(mFile);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
 
                         if(stream != null){
 
