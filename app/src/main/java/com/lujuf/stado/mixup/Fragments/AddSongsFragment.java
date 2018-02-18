@@ -4,11 +4,13 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -206,7 +208,21 @@ public class AddSongsFragment extends Fragment {
         return null;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==100){
+            selectedUri = data.getData();
+            String path = getPath(getActivity(),selectedUri);
+            mFile = new File(path);
+            upload_song.setEnabled(true);
+            if (null != selectedUri) {
+                // Get the path from the Uri
+                ContentResolver cr = getActivity().getContentResolver();
 
+            }
+        }
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -321,15 +337,16 @@ public class AddSongsFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                String path = getPath(,selectedUri);
-                mFile = new File(path);
 
-                        Intent i;
+
+                Intent i;
                 i = new Intent();
                 i.setType("audio/*");
                         i.setAction(Intent.ACTION_GET_CONTENT);
                         startActivityForResult(Intent.createChooser(i, "Select Song"), 100 );
-
+             //   data.getData();
+             //   String path = getPath(getActivity(),selectedUri);
+              //  mFile = new File(path);
             }
         });
 
