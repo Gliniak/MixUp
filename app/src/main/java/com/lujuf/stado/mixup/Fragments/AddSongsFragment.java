@@ -74,6 +74,7 @@ public class AddSongsFragment extends Fragment {
     private ProgressDialog mProgressDialog;
     private File mFile;
     Uri selectedUri;
+    Uri songUrl;
 
 
 
@@ -194,6 +195,7 @@ public class AddSongsFragment extends Fragment {
                                     // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                                     Log.e("Url", "DownloadUrl: "+downloadUrl);
+                                    songUrl=downloadUrl;
                                 }
                             });
                         }
@@ -235,8 +237,6 @@ public class AddSongsFragment extends Fragment {
                 String name = etName.getText().toString();
                 Spinner spGenre = (Spinner)getView().findViewById(R.id.spinner);
                 String genre = spGenre.getSelectedItem().toString();
-                //EditText etGenre = (EditText)getView().findViewById(R.id.etGenre);
-                //  int genre =Integer.parseInt(etGenre.getText().toString());
 
 
                 if( TextUtils.isEmpty(etArtist.getText())){
@@ -264,7 +264,7 @@ public class AddSongsFragment extends Fragment {
                     String newSongId = mDatabase.getReference().child("Songs").push().getKey();
 
                     FirebaseDatabaseObject.DatabaseSongs defaultSong;
-                    defaultSong = new FirebaseDatabaseObject.DatabaseSongs(newSongId, author, album, name, storageRef, genre, 1, price);
+                    defaultSong = new FirebaseDatabaseObject.DatabaseSongs(newSongId, author, album, name, songUrl, genre, 1, price);
 
                     mDatabase.getReference().child("Songs").child(newSongId).setValue(defaultSong.GetSongData());
                     mDatabase.getReference().push();
