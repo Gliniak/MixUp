@@ -1,6 +1,7 @@
 package com.lujuf.stado.mixup.Fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentUris;
@@ -83,7 +84,6 @@ public class AddSongsFragment extends Fragment {
     Uri songUrl;
 
 
-
     public static boolean checkPermissionForExternalStorage(Activity context) {
         int result = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (result == PackageManager.PERMISSION_GRANTED) {
@@ -93,7 +93,6 @@ public class AddSongsFragment extends Fragment {
             return false;
         }
     }
-
 
     private void showProgressDialog() {
         if (mProgressDialog == null) {
@@ -147,16 +146,16 @@ public class AddSongsFragment extends Fragment {
         return null;
     }
 
-
-    public static String getPath(final Context context, final Uri uri) {
+    @SuppressLint("NewApi")
+    public static String getPath(Context context, Uri selectedUri) {
 
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
         // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        if (isKitKat && DocumentsContract.isDocumentUri(context, selectedUri)) {
             // ExternalStorageProvider
-            if (isExternalStorageDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
+            if (isExternalStorageDocument(selectedUri)) {
+                final String docId = DocumentsContract.getDocumentId(selectedUri);
                 final String[] split = docId.split(":");
                 final String type = split[0];
 
@@ -164,13 +163,11 @@ public class AddSongsFragment extends Fragment {
                     return Environment.getExternalStorageDirectory() + "/"
                             + split[1];
                 }
-
-                // TODO handle non-primary volumes
             }
             // DownloadsProvider
-            else if (isDownloadsDocument(uri)) {
+            else if (isDownloadsDocument(selectedUri)) {
 
-                final String id = DocumentsContract.getDocumentId(uri);
+                final String id = DocumentsContract.getDocumentId(selectedUri);
                 final Uri contentUri = ContentUris.withAppendedId(
                         Uri.parse("content://downloads/public_downloads"),
                         Long.valueOf(id));
@@ -178,17 +175,13 @@ public class AddSongsFragment extends Fragment {
                 return getDataColumn(context, contentUri, null, null);
             }
             // MediaProvider
-            else if (isMediaDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
+            else if (isMediaDocument(selectedUri)) {
+                final String docId = DocumentsContract.getDocumentId(selectedUri);
                 final String[] split = docId.split(":");
                 final String type = split[0];
 
                 Uri contentUri = null;
-                if ("image".equals(type)) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                } else if ("video".equals(type)) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                } else if ("audio".equals(type)) {
+                if ("audio".equals(type)) {
                     contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
                 }
 
@@ -200,22 +193,27 @@ public class AddSongsFragment extends Fragment {
             }
         }
         // MediaStore (and general)
-        else if ("content".equalsIgnoreCase(uri.getScheme())) {
-            return getDataColumn(context, uri, null, null);
+
+        else if ("content".equalsIgnoreCase(selectedUri.getScheme())) {
+            return getDataColumn(context, selectedUri, null, null);
         }
+
         // File
-        else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            return uri.getPath();
+        else if ("file".equalsIgnoreCase(selectedUri.getScheme())) {
+            return selectedUri.getPath();
         }
 
         return null;
     }
+
+
 
     @Override
     public void onAttach(Context context) {
         Log.d("GUI", "Avatar onAttach!");
         // TODO Auto-generated method stub
         super.onAttach(context);
+        //  onAttachToContext(context);
         //context=context;
     }
 
@@ -323,7 +321,7 @@ public class AddSongsFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                String path = getPath(getActivity(),selectedUri);
+                String path = getPath(,selectedUri);
                 mFile = new File(path);
 
                         Intent i;
