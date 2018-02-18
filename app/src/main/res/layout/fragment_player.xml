@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/player_bg"
+        android:alpha="0.7">
+
+        <SeekBar
+            android:id="@+id/seekBar2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="6dp"
+            />
+
+        <ImageButton
+            android:id="@+id/player_play_stop_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/seekBar2"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_play_circle_filled_black_24dp"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:text="Play" />
+
+        <ImageButton
+            android:id="@+id/player_prev_song"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/seekBar2"
+            android:layout_toStartOf="@+id/player_play_stop_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:src="@drawable/ic_skip_previous_black_24dp"
+            android:text="Prev. Song" />
+
+        <ImageButton
+            android:id="@+id/player_next_song"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/seekBar2"
+            android:layout_toEndOf="@+id/player_play_stop_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:src="@drawable/ic_skip_next_black_24dp"
+            android:text="Next Song" />
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>

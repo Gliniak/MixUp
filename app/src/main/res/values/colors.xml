@@ -19,4 +19,5 @@
     <color name="btn_logut_bg">#ff6861</color>
 
     <color name="menu">#6c6c6c</color>
+    <color name="player_bg">#333333</color>
 </resources>

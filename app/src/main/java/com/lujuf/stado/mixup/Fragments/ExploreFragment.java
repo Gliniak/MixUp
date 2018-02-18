@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -27,6 +29,8 @@ import com.lujuf.stado.mixup.Objects.FirebaseDatabaseObject;
 import com.lujuf.stado.mixup.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -38,6 +42,8 @@ public class ExploreFragment extends Fragment {
 
     private FirebaseDatabase mDatabase;
     private FirebaseAuth mAuth;
+
+    private Spinner sort_type_spinner;
 
     private RecyclerView songs_view;
     private SwipeRefreshLayout songs_view_refresh;
@@ -74,6 +80,7 @@ public class ExploreFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        sort_type_spinner = getView().findViewById(R.id.fragment_explore_spinner_sort);
         songs_view = getView().findViewById(R.id.songs_view);
         songs_view_refresh = getView().findViewById(R.id.swipeRefreshLayout);
 
@@ -100,6 +107,34 @@ public class ExploreFragment extends Fragment {
             @Override
             public void onRefresh() {
                 LoadSongsData();
+            }
+        });
+
+        sort_type_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("Sort_type_spinner", "Pressed Item: i:" + String.valueOf(i) + " l:" + String.valueOf(l));
+
+                Collections.sort(songsList, new Comparator<FirebaseDatabaseObject.DatabaseSongs>() {
+                    @Override
+                    public int compare(FirebaseDatabaseObject.DatabaseSongs databaseSongs, FirebaseDatabaseObject.DatabaseSongs t1) {
+
+
+                        return 0;
+                    }
+                });
+                //songsList.
+                switch(i)
+                {
+                    //case 0:
+                        //songsList.
+                }
+                //Toast.makeText(view.getContext(), "Pressed item: " + String.valueOf(i), Toast.LENGTH_SHORT);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
 
