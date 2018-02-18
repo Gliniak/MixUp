@@ -2,6 +2,7 @@ package com.lujuf.stado.mixup.Fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -68,7 +69,10 @@ public class AddSongsFragment extends Fragment {
 
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
+
     public static final int EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 2;
+
+    private ProgressDialog mProgressDialog;
     private File mFile;
     Uri selectedUri;
 
@@ -85,8 +89,20 @@ public class AddSongsFragment extends Fragment {
     }
 
 
-    private void openFile(){
+    private void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(getActivity());
+            mProgressDialog.setMessage("Loading...");
+            mProgressDialog.setIndeterminate(true);
+        }
 
+        mProgressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
     }
 
     @Override
@@ -126,6 +142,7 @@ public class AddSongsFragment extends Fragment {
 
         add_song = getView().findViewById(R.id.add_song_button);
         upload_song = getView().findViewById(R.id.upload_song);
+        choose_song = getView().findViewById(R.id.choose_song);
 
         TextView userMail = getView().findViewById(R.id.user_email);
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -148,6 +165,7 @@ public class AddSongsFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+                showProgressDialog();
                     if (mFile != null && mFile.exists()) {
                         InputStream stream = null;
                         try {
@@ -162,7 +180,22 @@ public class AddSongsFragment extends Fragment {
                             storageRef = storageRef.child(selectedUri.getLastPathSegment());
 
                             UploadTask uploadTask = storageRef.putStream(stream);
-
+                            uploadTask.addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    hideProgressDialog();
+                                    Toast.makeText(getActivity(), "Uploading failed", Toast.LENGTH_LONG).show();
+                                    // Handle unsuccessful uploads
+                                }
+                            }).addOnSuccessListener(new OnSuccessListener() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    hideProgressDialog();
+                                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                    Log.e("Url", "DownloadUrl: "+downloadUrl);
+                                }
+                            });
                         }
                         else
                             {
@@ -181,13 +214,13 @@ public class AddSongsFragment extends Fragment {
         choose_song.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            /*               TO WYPIERDALA NI WIM CZEMU
+
                         Intent i;
                 i = new Intent();
                 i.setType("audio/*");
                         i.setAction(Intent.ACTION_GET_CONTENT);
                         startActivityForResult(Intent.createChooser(i, "Select Song"), 100 );
-               */
+
             }
         });
 
