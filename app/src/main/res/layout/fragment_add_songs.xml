@@ -61,7 +61,7 @@
                 android:layout_width="70dp"
                 android:layout_height="45dp"
                 android:ems="10"
-                android:text="Link: "
+                android:text="Song: "
                 android:textSize="25sp"
                 tools:layout_editor_absoluteX="8dp"
                 tools:layout_editor_absoluteY="40dp" />
@@ -91,7 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Add Song" />
+                android:text="Finish" />
 
 
         </LinearLayout>
@@ -135,19 +135,18 @@
                 android:ems="10"
                 android:inputType="numberDecimal"/>
 
-            <EditText
-                android:id="@+id/etLink"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ems="10"
-                android:inputType="textPersonName"/>
+            <Button
+                android:id="@+id/choose_song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Choose song" />
 
             <Spinner
                 android:id="@+id/spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/spinnerGenres"/>
+                android:layout_height="43dp"
+                android:entries="@array/spinnerGenres" />
 
             <EditText
                 android:id="@+id/etAlbum"
@@ -156,6 +155,13 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:inputType="textPersonName"/>
+
+            <Button
+                android:id="@+id/upload_song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Upload song" />
 
         </LinearLayout>
     </LinearLayout>

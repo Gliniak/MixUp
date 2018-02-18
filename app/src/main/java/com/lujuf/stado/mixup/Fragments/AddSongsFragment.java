@@ -1,9 +1,17 @@
 package com.lujuf.stado.mixup.Fragments;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -18,13 +26,23 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 import com.lujuf.stado.mixup.Adapters.DatabaseSongsAdapter;
 import com.lujuf.stado.mixup.Adapters.ExpandableListAdapter;
 import com.lujuf.stado.mixup.Objects.FirebaseDatabaseObject;
 import com.lujuf.stado.mixup.R;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +56,8 @@ public class AddSongsFragment extends Fragment {
     private FirebaseDatabase mDatabase;
 
     private Button add_song;
+    private Button upload_song;
+    private Button choose_song;
     private List<FirebaseDatabaseObject.DatabaseSongs> songsList = new ArrayList<>();
 
     private DatabaseSongsAdapter mAdapter;
@@ -45,6 +65,29 @@ public class AddSongsFragment extends Fragment {
     private ExpandableListAdapter listAdapter;
     private List<String> listDataHeader;
     private HashMap<String,List<String>> listHash;
+
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageRef = storage.getReference();
+    public static final int EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 2;
+    private File mFile;
+    Uri selectedUri;
+
+
+
+    public static boolean checkPermissionForExternalStorage(Activity context) {
+        int result = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE);
+            return false;
+        }
+    }
+
+
+    private void openFile(){
+
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -82,6 +125,7 @@ public class AddSongsFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance();
 
         add_song = getView().findViewById(R.id.add_song_button);
+        upload_song = getView().findViewById(R.id.upload_song);
 
         TextView userMail = getView().findViewById(R.id.user_email);
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -99,6 +143,54 @@ public class AddSongsFragment extends Fragment {
         });
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
 
+
+        upload_song.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                    if (mFile != null && mFile.exists()) {
+                        InputStream stream = null;
+                        try {
+                            stream = new FileInputStream(mFile);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
+                        if(stream != null){
+
+                            // Create a reference to "file"
+                            storageRef = storageRef.child(selectedUri.getLastPathSegment());
+
+                            UploadTask uploadTask = storageRef.putStream(stream);
+
+                        }
+                        else
+                            {
+                            Toast.makeText(getActivity(), "Getting null file", Toast.LENGTH_LONG).show();
+                            }
+                    }else {
+                        Toast.makeText(getActivity(), "File does not exist", Toast.LENGTH_LONG).show();
+                    }
+
+                }
+
+
+
+        });
+
+        choose_song.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            /*               TO WYPIERDALA NI WIM CZEMU
+                        Intent i;
+                i = new Intent();
+                i.setType("audio/*");
+                        i.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(i, "Select Song"), 100 );
+               */
+            }
+        });
+
         add_song.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,15 +200,11 @@ public class AddSongsFragment extends Fragment {
                 String album = etAlbum.getText().toString();
                 EditText etName = (EditText)getView().findViewById(R.id.etName);
                 String name = etName.getText().toString();
-                EditText etLink = (EditText)getView().findViewById(R.id.etLink);
-                String link = etLink.getText().toString();
                 Spinner spGenre = (Spinner)getView().findViewById(R.id.spinner);
                 String genre = spGenre.getSelectedItem().toString();
                 //EditText etGenre = (EditText)getView().findViewById(R.id.etGenre);
                 //  int genre =Integer.parseInt(etGenre.getText().toString());
 
-
-               // String helper = etPrice.getText().toString();
 
                 if( TextUtils.isEmpty(etArtist.getText())){
 
@@ -134,11 +222,6 @@ public class AddSongsFragment extends Fragment {
                     etName.setError( "Song title is required!" );
 
                 }
-               if( TextUtils.isEmpty(etLink.getText())){
-
-                    etLink.setError( "Link is required!" );
-
-                }
 
                 else{
                     EditText etPrice = (EditText)getView().findViewById(R.id.etPrice);
@@ -148,7 +231,7 @@ public class AddSongsFragment extends Fragment {
                     String newSongId = mDatabase.getReference().child("Songs").push().getKey();
 
                     FirebaseDatabaseObject.DatabaseSongs defaultSong;
-                    defaultSong = new FirebaseDatabaseObject.DatabaseSongs(newSongId, author, album, name, link, genre, 1, price);
+                    defaultSong = new FirebaseDatabaseObject.DatabaseSongs(newSongId, author, album, name, storageRef, genre, 1, price);
 
                     mDatabase.getReference().child("Songs").child(newSongId).setValue(defaultSong.GetSongData());
                     mDatabase.getReference().push();

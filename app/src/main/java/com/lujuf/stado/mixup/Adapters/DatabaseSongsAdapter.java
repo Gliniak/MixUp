@@ -73,11 +73,12 @@ public class DatabaseSongsAdapter extends RecyclerView.Adapter<DatabaseSongsAdap
                 mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Cart").child(song.SongID).setValue("");
                 mDatabase.getReference().push();
 
+                listenerRef.get().onPositionClicked(getAdapterPosition());
             } else {
                 //Toast.makeText(v.getContext(), "ROW PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
             }
 
-            listenerRef.get().onPositionClicked(getAdapterPosition());
+
         }
     }
 
