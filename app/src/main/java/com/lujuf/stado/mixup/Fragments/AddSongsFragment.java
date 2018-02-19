@@ -40,6 +40,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.lujuf.stado.mixup.Adapters.DatabaseSongsAdapter;
@@ -97,13 +98,14 @@ public class AddSongsFragment extends Fragment {
         }
     }
 
-    private void showProgressDialog() {
+    private void showProgressDialog(long progress) {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(getActivity());
-            mProgressDialog.setMessage("Loading...");
+            mProgressDialog.setMessage("Uploading..." + String.valueOf(progress) + "%");
             mProgressDialog.setIndeterminate(true);
         }
 
+        mProgressDialog.setMessage("Uploading..." + String.valueOf(progress) + "%");
         mProgressDialog.show();
     }
 
@@ -294,19 +296,17 @@ public class AddSongsFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                showProgressDialog();
-
                 boolean fileNotNull = mFile != null;
                 boolean fileExist = mFile.exists();
+                // Will be useful for checkin premissions!
                 boolean canRead = mFile.canRead();
+                final long FileSize = mFile.length();
 
-                if (ContextCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.READ_CONTACTS)
-                        != PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
                     // Should we show an explanation?
                     if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                            Manifest.permission.READ_CONTACTS)) {
+                            Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
                         // Show an explanation to the user *asynchronously* -- don't block
                         // this thread waiting for the user's response! After the user
@@ -317,7 +317,7 @@ public class AddSongsFragment extends Fragment {
                         // No explanation needed, we can request the permission.
 
                         ActivityCompat.requestPermissions(getActivity(),
-                                new String[]{Manifest.permission.READ_CONTACTS},
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                                 MY_PERMISSIONS_REQUEST_READ);
 
                         // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
@@ -325,6 +325,8 @@ public class AddSongsFragment extends Fragment {
                         // result of the request.
                     }
                 }
+
+
 
                 if (fileNotNull && fileExist) {
                     InputStream stream = null;
@@ -336,18 +338,29 @@ public class AddSongsFragment extends Fragment {
 
                         if(stream != null){
 
+                            showProgressDialog(0);
                             // Create a reference to "file"
                             storageRef = storageRef.child(selectedUri.getLastPathSegment());
 
                             UploadTask uploadTask = storageRef.putStream(stream);
-                            uploadTask.addOnFailureListener(new OnFailureListener() {
+
+                            uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                                 @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    hideProgressDialog();
-                                    Toast.makeText(getActivity(), "Uploading failed", Toast.LENGTH_LONG).show();
-                                    // Handle unsuccessful uploads
+                                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                    float ts = (float) taskSnapshot.getBytesTransferred() / FileSize;
+                                    long progress = Math.round(ts * 100);
+                                    showProgressDialog(progress);
                                 }
                             });
+
+                                    uploadTask.addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception exception) {
+                                            hideProgressDialog();
+                                            Toast.makeText(getActivity(), "Uploading failed", Toast.LENGTH_LONG).show();
+                                            // Handle unsuccessful uploads
+                                        }
+                                    });
 
                             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
@@ -448,6 +461,5 @@ public class AddSongsFragment extends Fragment {
 
             super.onViewCreated(view, savedInstanceState);
         }
-
     }
 

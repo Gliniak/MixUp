@@ -142,6 +142,8 @@ public class MainScreenActivity extends AppCompatActivity
             public void onClick(View view) {
                 playSong.setVisibility(View.INVISIBLE);
                 pauseSong.setVisibility(View.VISIBLE);
+
+                
             }
         });
 
