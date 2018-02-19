@@ -3,6 +3,8 @@ package com.lujuf.stado.mixup;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -48,13 +50,21 @@ public class AudioPlayerClass {
         songsQueue.add(Path);
     }
 
-    public void PlaySong(Context context, String Path)
+    public void PlaySong(View view, String Path)
     {
         // Pause actual song
         //getPlayer().pause();
         getPlayer().stop();
+        ImageButton playButton = view.findViewById(R.id.player_play_button);
+        ImageButton stopButton = view.findViewById(R.id.player_stop_button);
 
-        SetSongPath(context, Path);
+        if(playButton != null)
+            playButton.setVisibility(View.INVISIBLE);
+
+        if(stopButton != null)
+            stopButton.setVisibility(View.VISIBLE);
+
+        SetSongPath(view.getContext(), Path);
 
         getPlayer().start();
     }
