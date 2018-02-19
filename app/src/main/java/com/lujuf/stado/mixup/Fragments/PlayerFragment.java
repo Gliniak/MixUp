@@ -2,7 +2,6 @@ package com.lujuf.stado.mixup.Fragments;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,9 +16,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.firebase.database.FirebaseDatabase;
+import com.lujuf.stado.mixup.AudioPlayerClass;
 import com.lujuf.stado.mixup.R;
-
-import static com.lujuf.stado.mixup.MainScreenActivity.context;
 
 /**
  * Created by Gliniak on 18.02.2018.
@@ -34,12 +32,15 @@ public class PlayerFragment extends Fragment {
     TextView elapsedTimeLabel;
     TextView remainingTimeLabel;
     SeekBar positionBar;
-    MediaPlayer mp;
+
+    AudioPlayerClass player;
     int totalTime;
     Uri requestedSongUri;
+
     @Override
     public void onAttach(Context context) {
         Log.d("GUI", "Avatar onAttach!");
+        player.getPlayer();
         // TODO Auto-generated method stub
         super.onAttach(context);
         //context=context;
@@ -99,58 +100,54 @@ public class PlayerFragment extends Fragment {
         playSong = view.findViewById(R.id.player_play_button);
         pauseSong = view.findViewById(R.id.player_stop_button);
 
-        elapsedTimeLabel=(TextView)getView().findViewById(R.id.timePlayed);
-        remainingTimeLabel=(TextView)getView().findViewById(R.id.timeRemaining);
+        elapsedTimeLabel= getView().findViewById(R.id.timePlayed);
+        remainingTimeLabel= getView().findViewById(R.id.timeRemaining);
 
         // Mediaplayer
         // Kiedy bedzie skonczony upload plików wypełnic requestedSongUri
 
-        mp =MediaPlayer.create(context,requestedSongUri);
-        mp.setVolume(0.5f,0.5f);
-        totalTime = mp.getDuration();
+        //player.getPlayer().setVolume(0.5f,0.5f);
+        totalTime = player.getPlayer().getDuration();
 
         //PositionBar
 
-        positionBar=(SeekBar)getView().findViewById(R.id.positionBar);
+        positionBar= getView().findViewById(R.id.positionBar);
         positionBar.setMax(totalTime);
-        positionBar.setOnSeekBarChangeListener(
-                new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        if(fromUser){
-                            mp.seekTo(progress);
-                            positionBar.setProgress(progress);
-                        }
-                    }
+        positionBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-
-                    }
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(fromUser){
+                    player.getPlayer().seekTo(progress);
+                    positionBar.setProgress(progress);
                 }
-        );
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         // Thread (Update positionBar & timeLabel)
         new Thread(new Runnable(){
                 @Override
                         public void run(){
-                    while(mp!=null){
-                        try{
-                            Message msg =new Message();
-                            msg.what =mp.getCurrentPosition();
-                            handler.sendMessage(msg);
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {}
-                    }
+            while(player.getPlayer()!=null){
+                try{
+                    Message msg =new Message();
+                    msg.what =player.getPlayer().getCurrentPosition();
+                    handler.sendMessage(msg);
+                    Thread.sleep(1000);
+                    } catch (InterruptedException e) {}
                 }
+             }
         }).start();
-
-
 
         prevSong.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,13 +166,13 @@ public class PlayerFragment extends Fragment {
         playSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!mp.isPlaying())
+                if(!player.getPlayer().isPlaying())
                 {
-                    mp.start();
+                    player.getPlayer().start();
                     playSong.setVisibility(View.INVISIBLE);
                     pauseSong.setVisibility(View.VISIBLE);
                 } else {
-                    mp.pause();
+                    player.getPlayer().pause();
                     pauseSong.setVisibility(View.INVISIBLE);
                     playSong.setVisibility(View.VISIBLE);
                 }

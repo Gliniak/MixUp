@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.lujuf.stado.mixup.AudioPlayerClass;
 import com.lujuf.stado.mixup.Objects.FirebaseDatabaseObject;
 import com.lujuf.stado.mixup.R;
 
@@ -59,12 +60,20 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
 
             listenerRef = new WeakReference<>(listener);
             download_song.setOnClickListener(this);
+            play_song.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v)
         {
-            if (v.getId() == download_song.getId())
+            if(v.getId() == play_song.getId())
+            {
+                FirebaseDatabaseObject.DatabaseSongs song = songsList.get(getAdapterPosition());
+                Toast.makeText(v.getContext(), "You Playing Song: " + song.songData.Name, Toast.LENGTH_SHORT).show();
+
+                AudioPlayerClass.getInstance().PlaySong(v.getContext(), song.GetSongData().SongLink);
+            }
+            else if (v.getId() == download_song.getId())
             {
                 FirebaseDatabaseObject.DatabaseSongs song = songsList.get(getAdapterPosition());
                 Toast.makeText(v.getContext(), "You Downloading Song: " + song.songData.Name, Toast.LENGTH_SHORT).show();
