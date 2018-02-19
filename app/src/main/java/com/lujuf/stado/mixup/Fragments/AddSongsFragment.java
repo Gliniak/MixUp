@@ -338,6 +338,7 @@ public class AddSongsFragment extends Fragment {
 
                         if(stream != null){
 
+                            add_song.setEnabled(false);
                             showProgressDialog(0);
                             // Create a reference to "file"
                             storageRef = storageRef.child(selectedUri.getLastPathSegment());
@@ -365,6 +366,7 @@ public class AddSongsFragment extends Fragment {
                             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    add_song.setEnabled(true);
                                     hideProgressDialog();
                                     // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
@@ -442,7 +444,7 @@ public class AddSongsFragment extends Fragment {
                     String newSongId = mDatabase.getReference().child("Songs").push().getKey();
 
                     FirebaseDatabaseObject.DatabaseSongs defaultSong;
-                    defaultSong = new FirebaseDatabaseObject.DatabaseSongs(newSongId, author, album, name, songUrl, genre, 1, price);
+                    defaultSong = new FirebaseDatabaseObject.DatabaseSongs(newSongId, author, album, name, songUrl.getPath(), genre, 1, price);
 
                     mDatabase.getReference().child("Songs").child(newSongId).setValue(defaultSong.GetSongData());
                     mDatabase.getReference().push();

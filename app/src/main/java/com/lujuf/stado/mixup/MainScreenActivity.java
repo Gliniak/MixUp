@@ -248,6 +248,12 @@ public class MainScreenActivity extends AppCompatActivity
                 fragment = new ExploreFragment();
                 break;
 
+            case R.id.nav_my_songs:
+                getSupportActionBar().setTitle("My Songs");
+                Log.d("GUI", "User Pressed My Songs Button!");
+                fragment = new WallFragment(); // As dummy Fragment
+                break;
+
             case R.id.nav_app_settings:
                 getSupportActionBar().setTitle(R.string.bar_text_settings);
                 fragment = new AppSettingsFragment();

@@ -1,7 +1,5 @@
 package com.lujuf.stado.mixup.Objects;
 
-import android.net.Uri;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -173,7 +171,7 @@ public class FirebaseDatabaseObject
             public String AuthorID;
             public String AlbumID;
             public String Name;
-            public Uri SongLink;
+            public String SongLink;
             public String Owner_id;
             public float price;
 
@@ -193,7 +191,7 @@ public class FirebaseDatabaseObject
                 this.Owner_id="";
             }
 
-            public SongData(String Author, String Album, String Name, Uri link, String Genre, int Flags, float price) {
+            public SongData(String Author, String Album, String Name, String link, String Genre, int Flags, float price) {
                 this.AuthorID = Author;
                 this.AlbumID = Album;
                 this.Name = Name;
@@ -213,7 +211,7 @@ public class FirebaseDatabaseObject
             this.songData = new SongData();
         }
 
-        public DatabaseSongs(String SongId, String Author, String Album, String Name, Uri link, String Genre, int Flags, float price)
+        public DatabaseSongs(String SongId, String Author, String Album, String Name, String link, String Genre, int Flags, float price)
         {
             this.SongID = SongId;
             this.songData = new SongData(Author, Album, Name, link, Genre, Flags, price);
@@ -234,7 +232,8 @@ public class FirebaseDatabaseObject
             song.songData.Name = snap.child("Name").getValue().toString();
             song.songData.GenreFlags = snap.child("GenreFlags").getValue().toString();
             song.songData.price = Float.parseFloat(snap.child("price").getValue().toString());
-            song.songData.SongLink = Uri.parse(snap.child("SongLink").getValue().toString());
+            song.songData.SongLink = snap.child("SongLink").getValue().toString();
+            //song.songData.SongLink = Uri.parse(snap.child("SongLink").getValue().toString());
 
             return song;
         }
