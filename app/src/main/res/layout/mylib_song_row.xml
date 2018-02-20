@@ -30,16 +30,38 @@
             android:text="Pop" />
     </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/download_song"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+
+
+    <FrameLayout
+        android:id="@+id/frame_layout_mylib_dwn_btn"
         android:layout_alignParentEnd="true"
-        android:layout_margin="0dp"
-        android:padding="4dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_get_app_black_24dp" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/download_song"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="0dp"
+            android:padding="4dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_get_app_black_24dp" />
+
+        <ProgressBar
+            android:id="@+id/download_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:min="0"
+            android:max="100"
+            android:visibility="invisible"
+            android:layout_gravity="center"
+            android:scaleY="2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+
+
 
     <ImageButton
         android:id="@+id/mylib_play_song"
@@ -47,10 +69,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
-        android:layout_toStartOf="@id/download_song"
+        android:layout_toStartOf="@id/frame_layout_mylib_dwn_btn"
         android:padding="4dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_play_circle_filled_black_24dp" />
+
+
 
 
 </RelativeLayout>

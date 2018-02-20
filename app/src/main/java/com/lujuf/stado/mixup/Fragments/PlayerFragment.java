@@ -2,7 +2,6 @@ package com.lujuf.stado.mixup.Fragments;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,14 +32,11 @@ public class PlayerFragment extends Fragment {
     TextView remainingTimeLabel;
     SeekBar positionBar;
 
-    AudioPlayerClass player;
     int totalTime;
-    Uri requestedSongUri;
 
     @Override
     public void onAttach(Context context) {
         Log.d("GUI", "Avatar onAttach!");
-        player.getPlayer();
         // TODO Auto-generated method stub
         super.onAttach(context);
         //context=context;
@@ -93,7 +89,6 @@ public class PlayerFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        //FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         prevSong = view.findViewById(R.id.player_prev_song);
         nextSong = view.findViewById(R.id.player_next_song);
@@ -107,7 +102,7 @@ public class PlayerFragment extends Fragment {
         // Kiedy bedzie skonczony upload plików wypełnic requestedSongUri
 
         //player.getPlayer().setVolume(0.5f,0.5f);
-        totalTime = player.getPlayer().getDuration();
+        totalTime = AudioPlayerClass.getInstance().getPlayer().getDuration();
 
         //PositionBar
 
@@ -118,7 +113,7 @@ public class PlayerFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(fromUser){
-                    player.getPlayer().seekTo(progress);
+                    AudioPlayerClass.getInstance().getPlayer().seekTo(progress);
                     positionBar.setProgress(progress);
                 }
             }
@@ -138,10 +133,10 @@ public class PlayerFragment extends Fragment {
         new Thread(new Runnable(){
                 @Override
                         public void run(){
-            while(player.getPlayer()!=null){
+            while(AudioPlayerClass.getInstance().getPlayer()!=null){
                 try{
                     Message msg =new Message();
-                    msg.what =player.getPlayer().getCurrentPosition();
+                    msg.what = AudioPlayerClass.getInstance().getPlayer().getCurrentPosition();
                     handler.sendMessage(msg);
                     Thread.sleep(1000);
                     } catch (InterruptedException e) {}
@@ -166,13 +161,13 @@ public class PlayerFragment extends Fragment {
         playSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!player.getPlayer().isPlaying())
+                if(!AudioPlayerClass.getInstance().getPlayer().isPlaying())
                 {
-                    player.getPlayer().start();
+                    AudioPlayerClass.getInstance().getPlayer().start();
                     playSong.setVisibility(View.INVISIBLE);
                     pauseSong.setVisibility(View.VISIBLE);
                 } else {
-                    player.getPlayer().pause();
+                    AudioPlayerClass.getInstance().getPlayer().pause();
                     pauseSong.setVisibility(View.INVISIBLE);
                     playSong.setVisibility(View.VISIBLE);
                 }
@@ -183,6 +178,9 @@ public class PlayerFragment extends Fragment {
         pauseSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!AudioPlayerClass.getInstance().getPlayer().isPlaying())
+                    AudioPlayerClass.getInstance().getPlayer().start();
+
                 pauseSong.setVisibility(View.INVISIBLE);
                 playSong.setVisibility(View.VISIBLE);
             }

@@ -1,10 +1,8 @@
 package com.lujuf.stado.mixup.Adapters;
 
 import android.Manifest;
-import android.app.DownloadManager;
+import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -14,36 +12,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.UploadTask;
+import com.google.firebase.storage.StorageReference;
 import com.lujuf.stado.mixup.AudioPlayerClass;
 import com.lujuf.stado.mixup.Objects.FirebaseDatabaseObject;
 import com.lujuf.stado.mixup.R;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.net.URI;
 import java.util.List;
+
+import static android.os.Environment.DIRECTORY_MUSIC;
+import static com.lujuf.stado.mixup.Fragments.AddSongsFragment.MY_PERMISSIONS_REQUEST_READ;
 
 /**
  * Created by Gliniak on 15.02.2018.
  */
 
-public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyViewHolder>
-{
+public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyViewHolder> {
     public interface ClickListener {
 
         void onPositionClicked(int position);
@@ -65,7 +62,9 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
         public ImageButton play_song;
         public ImageButton download_song;
 
-        private View mainView;
+        public ProgressBar download_progress_bar;
+
+        private final View mainView;
 
         private WeakReference<MyLibraryAdapter.ClickListener> listenerRef;
 
@@ -81,6 +80,8 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
             play_song = view.findViewById(R.id.mylib_play_song);
             download_song = view.findViewById(R.id.download_song);
 
+            download_progress_bar = view.findViewById(R.id.download_progress_bar);
+
             mainView = view;
 
             listenerRef = new WeakReference<>(listener);
@@ -89,28 +90,109 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
         }
 
         @Override
-        public void onClick(View v)
-        {
-            if(v.getId() == play_song.getId())
-            {
+        public void onClick(View v) {
+            if (v.getId() == play_song.getId()) {
                 FirebaseDatabaseObject.DatabaseSongs song = songsList.get(getAdapterPosition());
                 Toast.makeText(v.getContext(), "You Playing Song: " + song.songData.Name, Toast.LENGTH_SHORT).show();
 
-                AudioPlayerClass.getInstance().PlaySong(this.mainView, song.GetSongData().SongLink);
-            }
-            else if (v.getId() == download_song.getId())
-            {
+                CheckPermission(mainView, Manifest.permission.READ_EXTERNAL_STORAGE);
+                DownloadTempSong(v, song.songData.SongLink, true);
+
+            } else if (v.getId() == download_song.getId()) {
+                CheckPermission(mainView, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
                 FirebaseDatabaseObject.DatabaseSongs song = songsList.get(getAdapterPosition());
-                DownloadSong(song.songData.SongLink);
+                DownloadSong(v, song.songData.SongLink);
                 Toast.makeText(v.getContext(), "You Downloading Song: " + song.songData.SongLink, Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
+            } else {
                 //Toast.makeText(v.getContext(), "ROW PRESSED = " + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
             }
-            if(listenerRef != null && listenerRef.get() != null)
+            if (listenerRef != null && listenerRef.get() != null)
                 listenerRef.get().onPositionClicked(getAdapterPosition());
         }
+
+        public void DownloadTempSong(final View view, String path, final boolean autoPlay) {
+
+            final String fileName = path.substring(path.lastIndexOf("/"), path.length());
+
+
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+
+            path = path.substring(path.lastIndexOf("/"));
+            StorageReference gsReference = storage.getReferenceFromUrl("gs://mixup-fbafb.appspot.com/" + path);
+
+            File localFile = null;
+
+            try {
+                localFile = File.createTempFile("audio", ".mp3");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            final String localPath = localFile.getPath();
+
+            gsReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Log.d("FIREBASE DOWNLOAD", "FILE DOWNLOADING COMPLETED");
+
+                    if(autoPlay)
+                        AudioPlayerClass.getInstance().PlaySong(view, localPath);
+                    // Local temp file has been created
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                }
+            }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Log.d("FIREBASE DOWNLOAD", "FILE DOWNLOADING...");
+                }
+            });
+        }
+
+        public void DownloadSong(final View view, String path) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+
+            final String fileName = path.substring(path.lastIndexOf("/"), path.length());
+
+            path = path.substring(path.lastIndexOf("/")+1);
+            StorageReference gsReference = storage.getReferenceFromUrl("gs://mixup-fbafb.appspot.com/" + path);
+
+            String sdPath = view.getContext().getApplicationContext().getExternalFilesDir(DIRECTORY_MUSIC).toString();
+            final File file = new File(sdPath, fileName);
+
+            download_progress_bar.setVisibility(View.VISIBLE);
+            download_song.setVisibility(View.INVISIBLE);
+
+            gsReference.getFile(file).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    download_progress_bar.setVisibility(View.INVISIBLE);
+                    download_song.setImageResource(R.drawable.ic_done_black_24dp);
+                    download_song.setVisibility(View.VISIBLE);
+                    Log.d("FIREBASE DOWNLOAD", "FILE DOWNLOADING COMPLETED: " +  file.length());//localPath);
+                    // Local temp file has been created
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                }
+            }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    float ts = (float) taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount();
+                    int progress = Math.round(ts * 100);
+
+                    download_progress_bar.setProgress(progress);
+                    Log.d("FIREBASE DOWNLOAD", "FILE DOWNLOADING...");
+                }
+            });
+        }
+
     }
 
 
@@ -139,8 +221,20 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
 
     @Override
     public void onBindViewHolder(MyLibraryAdapter.MyViewHolder holder, int position) {
-
         FirebaseDatabaseObject.DatabaseSongs song = songsList.get(position);
+
+        String path = song.songData.SongLink;
+        if(!path.isEmpty() && path.contains("/")) {
+            final String fileName = path.substring(path.lastIndexOf("/"), path.length());
+
+            String sdPath = holder.mainView.getContext().getApplicationContext().getExternalFilesDir(DIRECTORY_MUSIC).toString();
+
+            final File file = new File(sdPath + fileName);
+
+            if (file.exists())
+                holder.download_song.setImageResource(R.drawable.ic_done_black_24dp);
+        }
+
         holder.title_author.setText(song.GetSongData().GetSongTitle());
     }
 
@@ -149,20 +243,13 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
         return songsList.size();
     }
 
-    public void DownloadSong(String path)
-    {
-        File sdDir = Environment.getExternalStorageDirectory();
-       // URI link = new URI()
 
-        // TODO: THis should be in main fragment.
 
-        /*
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+    public void CheckPermission(View view, String permission) {
+        if (ContextCompat.checkSelfPermission(view.getContext(), permission) != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
+            if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) view.getContext(), permission)) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
@@ -171,73 +258,14 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
 
                 // No explanation needed, we can request the permission.
 
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                ActivityCompat.requestPermissions((Activity) view.getContext(),
+                        new String[]{permission},
                         MY_PERMISSIONS_REQUEST_READ);
 
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
             }
-        }*/
-
-
-        // TODO: Huge TODO xD
-        if (fileNotNull && fileExist) {
-            OutputStream ostream = null;
-
-            InputStream stream = null;
-            try {
-                stream = new FileInputStream(mFile);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            if(stream != null){
-
-                add_song.setEnabled(false);
-                showProgressDialog(0);
-                // Create a reference to "file"
-                storageRef = storageRef.child(selectedUri.getLastPathSegment());
-
-                UploadTask uploadTask = storageRef.putStream(stream);
-
-                uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                        float ts = (float) taskSnapshot.getBytesTransferred() / FileSize;
-                        long progress = Math.round(ts * 100);
-                        showProgressDialog(progress);
-                    }
-                });
-
-                uploadTask.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        hideProgressDialog();
-                        Toast.makeText(getActivity(), "Uploading failed", Toast.LENGTH_LONG).show();
-                        // Handle unsuccessful uploads
-                    }
-                });
-
-                uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        add_song.setEnabled(true);
-                        hideProgressDialog();
-                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                        Log.e("Url", "DownloadUrl: "+downloadUrl);
-                        songUrl=downloadUrl;
-                    }
-                });
-            }
-            else
-            {
-                Toast.makeText(getActivity(), "Getting null file", Toast.LENGTH_LONG).show();
-            }
-        }else {
-            Toast.makeText(getActivity(), "File does not exist", Toast.LENGTH_LONG).show();
         }
     }
 }

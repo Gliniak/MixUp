@@ -34,6 +34,8 @@ import com.lujuf.stado.mixup.Fragments.OrdersFragment;
 import com.lujuf.stado.mixup.Fragments.UserCartFragment;
 import com.lujuf.stado.mixup.Fragments.WallFragment;
 
+import static android.os.Environment.DIRECTORY_MUSIC;
+
 
 // DO A FUC%$N CLEANUP SOON OK BRO?
 
@@ -84,6 +86,8 @@ public class MainScreenActivity extends AppCompatActivity
         userCart = findViewById(R.id.menu_user_cart);
         cartItems = findViewById(R.id.cart_items_amount);
         playerLayout = findViewById(R.id.app_bar_player);
+
+        AudioPlayerClass.getInstance().AddSongsFromLocation(context.getExternalFilesDir(DIRECTORY_MUSIC).toString());
 
         userCart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,6 +144,8 @@ public class MainScreenActivity extends AppCompatActivity
         playSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                AudioPlayerClass.getInstance().PlaySong();
                 playSong.setVisibility(View.INVISIBLE);
                 pauseSong.setVisibility(View.VISIBLE);
 
@@ -150,6 +156,7 @@ public class MainScreenActivity extends AppCompatActivity
         pauseSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                AudioPlayerClass.getInstance().PauseSong();
                 pauseSong.setVisibility(View.INVISIBLE);
                 playSong.setVisibility(View.VISIBLE);
             }

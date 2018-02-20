@@ -1,12 +1,11 @@
 package com.lujuf.stado.mixup;
 
-import android.content.Context;
 import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,36 +24,121 @@ public class AudioPlayerClass {
     private MediaPlayer player;
     private List<String> songsQueue;
 
+    private int pausePosition;
+
     private AudioPlayerClass() {
         Log.d("PLAYER", "Creating Singleton Player Instance");
         player = new MediaPlayer();
         songsQueue = new ArrayList<String>();
 
+        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                player.start();
+            }
+        });
     }
 
-    public void SetSongPath(Context context, String Path)
+    public void AddSongsFromLocation(String loc)
+    {
+        if(loc != null)
+        {
+            File readDir = new File(loc);
+            if(readDir.exists() && readDir.isDirectory())
+            {
+                File[] files = readDir.listFiles();
+                for (File file : files) {
+                    if(file.getName().endsWith(".mp3"))
+                        songsQueue.add("file://" + file.getPath());
+                }
+            }
+        }
+    }
+
+    public void AddSongToList(View view, String fileName)
+    {
+        if(IsInList(fileName))
+            return;
+
+    }
+
+    public boolean IsInList(String Path)
+    {
+        return songsQueue.contains(Path);
+    }
+
+    public void SetSongPath(String Path)
     {
         Log.d("PLAYER", "Set Path To Song: " + Path);
 
         try {
             player.setDataSource(Path);
         } catch (IOException e) {
-            Toast.makeText(context, "Missing Sound File", Toast.LENGTH_SHORT);
             e.printStackTrace();
         }
     }
 
     public MediaPlayer getPlayer() { return player; }
+
     public void AddNewSongToQueue(String Path)
     {
         songsQueue.add(Path);
     }
 
+    public void PlaySong()
+    {
+        if(player.isPlaying())
+            return;
+
+        if(!player.isPlaying() && player.getCurrentPosition() > 1)
+        {
+            // Something is paused?
+            player.start();
+            return;
+        }
+
+        if(songsQueue.isEmpty())
+            return;
+
+        SetSongPath(songsQueue.get(0));
+
+        try {
+            player.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        player.start();
+    }
+
+    public void PauseSong()
+    {
+        player.pause();
+        //pausePosition = player.getCurrentPosition();
+    }
+
+    public void StopSong(View view)
+    {
+        player.stop();
+
+        // TODO: This is always null
+        ImageButton playButton = view.findViewById(R.id.player_play_button);
+        ImageButton stopButton = view.findViewById(R.id.player_stop_button);
+
+        if(playButton != null)
+            playButton.setVisibility(View.VISIBLE);
+
+        if(stopButton != null)
+            stopButton.setVisibility(View.INVISIBLE);
+
+    }
+
     public void PlaySong(View view, String Path)
     {
-        // Pause actual song
-        //getPlayer().pause();
-        getPlayer().stop();
+        if(player.isPlaying())
+            StopSong(view);
+
+    // TODO: Same here
         ImageButton playButton = view.findViewById(R.id.player_play_button);
         ImageButton stopButton = view.findViewById(R.id.player_stop_button);
 
@@ -64,8 +148,14 @@ public class AudioPlayerClass {
         if(stopButton != null)
             stopButton.setVisibility(View.VISIBLE);
 
-        SetSongPath(view.getContext(), Path);
+        SetSongPath(Path);
 
-        getPlayer().start();
+        try {
+            player.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        player.start();
     }
 }
