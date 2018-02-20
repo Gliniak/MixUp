@@ -113,6 +113,10 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
 
         public void DownloadTempSong(final View view, String path, final boolean autoPlay) {
 
+            // Something wrong with Path just return
+            if(!path.contains("/"))
+                return;
+
             final String fileName = path.substring(path.lastIndexOf("/"), path.length());
 
 
@@ -154,6 +158,11 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
         }
 
         public void DownloadSong(final View view, String path) {
+
+            // Something wrong with Path just return
+            if(!path.contains("/"))
+                return;
+
             FirebaseStorage storage = FirebaseStorage.getInstance();
 
             final String fileName = path.substring(path.lastIndexOf("/"), path.length());
