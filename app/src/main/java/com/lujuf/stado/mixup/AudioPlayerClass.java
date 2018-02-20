@@ -25,6 +25,7 @@ public class AudioPlayerClass {
     private List<String> songsQueue;
 
     private int pausePosition;
+    private int queuePos;
 
     private AudioPlayerClass() {
         Log.d("PLAYER", "Creating Singleton Player Instance");
@@ -85,7 +86,23 @@ public class AudioPlayerClass {
         songsQueue.add(Path);
     }
 
-    public void PlaySong()
+    public void NextSong()
+    {
+        if(++queuePos >= songsQueue.size())
+            queuePos = 0;
+
+        PlaySong(queuePos);
+    }
+
+    public void PrevSong()
+    {
+        if(--queuePos < 0)
+            queuePos = songsQueue.size()-1;
+
+        PlaySong(queuePos);
+    }
+
+    public void PlaySong(int pos)
     {
         if(player.isPlaying())
             return;
@@ -100,7 +117,7 @@ public class AudioPlayerClass {
         if(songsQueue.isEmpty())
             return;
 
-        SetSongPath(songsQueue.get(0));
+        SetSongPath(songsQueue.get(pos));
 
         try {
             player.prepare();

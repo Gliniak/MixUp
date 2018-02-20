@@ -32,12 +32,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -220,7 +218,7 @@ public class AddSongsFragment extends Fragment {
                 selectedUri = data.getData();
                 File sdDir = Environment.getExternalStorageDirectory();
                 String filePath = selectedUri.getPath();
-                // better way?
+                // TODO: better way?
                 filePath = filePath.replace("/document", "/storage");
                 filePath = filePath.replace(":", "/");
 
@@ -274,9 +272,6 @@ public class AddSongsFragment extends Fragment {
         add_song = getView().findViewById(R.id.add_song_button);
         upload_song = getView().findViewById(R.id.upload_song);
         choose_song = getView().findViewById(R.id.choose_song);
-
-        TextView userMail = getView().findViewById(R.id.user_email);
-        FirebaseAuth auth = FirebaseAuth.getInstance();
 
         mAdapter = new DatabaseSongsAdapter(songsList, new DatabaseSongsAdapter.ClickListener() {
             @Override
@@ -354,14 +349,14 @@ public class AddSongsFragment extends Fragment {
                                 }
                             });
 
-                                    uploadTask.addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception exception) {
-                                            hideProgressDialog();
-                                            Toast.makeText(getActivity(), "Uploading failed", Toast.LENGTH_LONG).show();
-                                            // Handle unsuccessful uploads
-                                        }
-                                    });
+                            uploadTask.addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    hideProgressDialog();
+                                    Toast.makeText(getActivity(), "Uploading failed", Toast.LENGTH_LONG).show();
+                                    // Handle unsuccessful uploads
+                                }
+                            });
 
                             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
@@ -393,8 +388,6 @@ public class AddSongsFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-
-
                 Intent i;
                 i = new Intent();
                 i.setType("audio/*");
@@ -409,13 +402,13 @@ public class AddSongsFragment extends Fragment {
         add_song.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText etArtist = (EditText)getView().findViewById(R.id.etArtist);
+                EditText etArtist = getView().findViewById(R.id.etArtist);
                 String author = etArtist.getText().toString();
-                EditText etAlbum = (EditText)getView().findViewById(R.id.etAlbum);
+                EditText etAlbum = getView().findViewById(R.id.etAlbum);
                 String album = etAlbum.getText().toString();
-                EditText etName = (EditText)getView().findViewById(R.id.etName);
+                EditText etName = getView().findViewById(R.id.etName);
                 String name = etName.getText().toString();
-                Spinner spGenre = (Spinner)getView().findViewById(R.id.spinner);
+                Spinner spGenre = getView().findViewById(R.id.spinner);
                 String genre = spGenre.getSelectedItem().toString();
 
 

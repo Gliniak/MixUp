@@ -131,6 +131,7 @@ public class MainScreenActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Log.d("MIXUP - MP3PLAYER:", "Playing Previous Song");
+                AudioPlayerClass.getInstance().PrevSong();
             }
         });
 
@@ -138,6 +139,7 @@ public class MainScreenActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Log.d("MIXUP - MP3PLAYER:", "Playing Next Song");
+                AudioPlayerClass.getInstance().NextSong();
             }
         });
 
@@ -145,7 +147,8 @@ public class MainScreenActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-                AudioPlayerClass.getInstance().PlaySong();
+                // TODO: CHANGE THIS
+                AudioPlayerClass.getInstance().PlaySong(0);
                 playSong.setVisibility(View.INVISIBLE);
                 pauseSong.setVisibility(View.VISIBLE);
 

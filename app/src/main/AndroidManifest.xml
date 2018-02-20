@@ -26,8 +26,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ResetPasswordActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".MainScreenActivity"
-            android:screenOrientation="portrait" />
+        <activity android:name=".MainScreenActivity" />
         <activity android:name=".PaymentDetails"
             android:screenOrientation="portrait"/>
     </application>
