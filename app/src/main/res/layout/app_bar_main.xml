@@ -19,44 +19,19 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary">
 
-            <android.support.constraint.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-                <ImageButton
-                    android:id="@+id/menu_user_cart"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="88dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="end"
-                    android:layout_marginStart="268dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight="2"
-                    android:paddingEnd="16dp"
-                    android:scaleType="fitEnd"
-                    android:showAsAction="always"
-                    android:src="@drawable/ic_shopping_cart_black_24dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+            <include
+                layout="@layout/cart_button_layout"
+                android:id="@+id/cart_button_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end" />
 
-                     <TextView
-                    android:id="@+id/cart_items_amount"
-                    android:layout_width="10dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="end"
-                    android:layout_weight="2"
-                    android:scaleType="fitEnd"
-                    android:background="@drawable/rounded_corner"
-                    android:text="0"
-                    android:layout_marginStart="322dp"
-                         android:layout_marginBottom="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                     />
-
-            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
