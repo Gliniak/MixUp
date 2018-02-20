@@ -24,7 +24,6 @@ public class AudioPlayerClass {
     private MediaPlayer player;
     private List<String> songsQueue;
 
-    private int pausePosition;
     private int queuePos;
 
     private AudioPlayerClass() {
@@ -56,11 +55,12 @@ public class AudioPlayerClass {
         }
     }
 
-    public void AddSongToList(View view, String fileName)
+    public void AddSongToList(String fileName)
     {
         if(IsInList(fileName))
             return;
 
+        songsQueue.add("file://" + fileName);
     }
 
     public boolean IsInList(String Path)

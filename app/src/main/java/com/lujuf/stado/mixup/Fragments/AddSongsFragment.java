@@ -1,21 +1,15 @@
 package com.lujuf.stado.mixup.Fragments;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -36,6 +30,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -61,10 +56,10 @@ import java.util.List;
 public class AddSongsFragment extends Fragment {
 
     private FirebaseDatabase mDatabase;
+    private FirebaseAuth mAuth;
 
     private Button add_song;
     private Button upload_song;
-    private Button choose_song;
     private List<FirebaseDatabaseObject.DatabaseSongs> songsList = new ArrayList<>();
 
     private DatabaseSongsAdapter mAdapter;
@@ -84,7 +79,6 @@ public class AddSongsFragment extends Fragment {
 
     Uri selectedUri;
     Uri songUrl;
-
 
     public static boolean checkPermissionForExternalStorage(Activity context) {
         int result = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -149,6 +143,7 @@ public class AddSongsFragment extends Fragment {
         return null;
     }
 
+    /*
     @SuppressLint("NewApi")
     public static String getPath(Context context, Uri selectedUri) {
 
@@ -207,7 +202,7 @@ public class AddSongsFragment extends Fragment {
         }
 
         return null;
-    }
+    }*/
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -224,10 +219,11 @@ public class AddSongsFragment extends Fragment {
 
                 mFile = new File(filePath);
 
-                upload_song.setEnabled(true);
                 if (null != selectedUri) {
                     // Get the path from the Uri
-                    ContentResolver cr = getActivity().getContentResolver();
+                    //ContentResolver cr = getActivity().getContentResolver();
+                    UploadSong();
+
 
                 }
             }
@@ -268,10 +264,10 @@ public class AddSongsFragment extends Fragment {
        super.onCreate(savedInstanceState);
 
         mDatabase = FirebaseDatabase.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         add_song = getView().findViewById(R.id.add_song_button);
         upload_song = getView().findViewById(R.id.upload_song);
-        choose_song = getView().findViewById(R.id.choose_song);
 
         mAdapter = new DatabaseSongsAdapter(songsList, new DatabaseSongsAdapter.ClickListener() {
             @Override
@@ -286,116 +282,13 @@ public class AddSongsFragment extends Fragment {
         });
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
 
-
         upload_song.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                boolean fileNotNull = mFile != null;
-                boolean fileExist = mFile.exists();
-                // Will be useful for checkin premissions!
-                boolean canRead = mFile.canRead();
-                final long FileSize = mFile.length();
-
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-                    // Should we show an explanation?
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                            Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-                        // Show an explanation to the user *asynchronously* -- don't block
-                        // this thread waiting for the user's response! After the user
-                        // sees the explanation, try again to request the permission.
-
-                    } else {
-
-                        // No explanation needed, we can request the permission.
-
-                        ActivityCompat.requestPermissions(getActivity(),
-                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                                MY_PERMISSIONS_REQUEST_READ);
-
-                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                        // app-defined int constant. The callback method gets the
-                        // result of the request.
-                    }
-                }
-
-
-
-                if (fileNotNull && fileExist) {
-                    InputStream stream = null;
-                    try {
-                        stream = new FileInputStream(mFile);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-
-                        if(stream != null){
-
-                            add_song.setEnabled(false);
-                            showProgressDialog(0);
-                            // Create a reference to "file"
-                            storageRef = storageRef.child(selectedUri.getLastPathSegment());
-
-                            UploadTask uploadTask = storageRef.putStream(stream);
-
-                            uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                                    float ts = (float) taskSnapshot.getBytesTransferred() / FileSize;
-                                    long progress = Math.round(ts * 100);
-                                    showProgressDialog(progress);
-                                }
-                            });
-
-                            uploadTask.addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    hideProgressDialog();
-                                    Toast.makeText(getActivity(), "Uploading failed", Toast.LENGTH_LONG).show();
-                                    // Handle unsuccessful uploads
-                                }
-                            });
-
-                            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    add_song.setEnabled(true);
-                                    hideProgressDialog();
-                                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                    Log.e("Url", "DownloadUrl: "+downloadUrl);
-                                    songUrl=downloadUrl;
-                                }
-                            });
-                        }
-                        else
-                            {
-                            Toast.makeText(getActivity(), "Getting null file", Toast.LENGTH_LONG).show();
-                            }
-                    }else {
-                        Toast.makeText(getActivity(), "File does not exist", Toast.LENGTH_LONG).show();
-                    }
-
-                }
-
-
-
-        });
-
-        choose_song.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent i;
-                i = new Intent();
+                Intent i = new Intent();
                 i.setType("audio/*");
-                        i.setAction(Intent.ACTION_GET_CONTENT);
-                        startActivityForResult(Intent.createChooser(i, "Select Song"), 100 );
-             //   data.getData();
-             //   String path = getPath(getActivity(),selectedUri);
-              //  mFile = new File(path);
+                i.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(i, "Select Song"), 100 );
             }
         });
 
@@ -410,7 +303,6 @@ public class AddSongsFragment extends Fragment {
                 String name = etName.getText().toString();
                 Spinner spGenre = getView().findViewById(R.id.spinner);
                 String genre = spGenre.getSelectedItem().toString();
-
 
                 if( TextUtils.isEmpty(etArtist.getText())){
 
@@ -430,7 +322,7 @@ public class AddSongsFragment extends Fragment {
                 }
 
                 else{
-                    EditText etPrice = (EditText)getView().findViewById(R.id.etPrice);
+                    EditText etPrice = getView().findViewById(R.id.etPrice);
                     float price = Float.parseFloat(etPrice.getText().toString());
 
                     Log.d("GUI", "Add_song_button");
@@ -440,6 +332,7 @@ public class AddSongsFragment extends Fragment {
                     defaultSong = new FirebaseDatabaseObject.DatabaseSongs(newSongId, author, album, name, songUrl.getPath(), genre, 1, price);
 
                     mDatabase.getReference().child("Songs").child(newSongId).setValue(defaultSong.GetSongData());
+                    mDatabase.getReference().child("Users").child(mAuth.getUid()).child("Created").child(newSongId).setValue("");
                     mDatabase.getReference().push();
 
                     Context context = getContext();
@@ -448,13 +341,120 @@ public class AddSongsFragment extends Fragment {
 
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
+
+                    // Need to cleanup fragment
+                    Cleanup();
                 }
-
-
             }
         });
 
             super.onViewCreated(view, savedInstanceState);
+        }
+
+        private void UploadSong()
+        {
+            boolean fileNotNull = mFile != null;
+            boolean fileExist = mFile.exists();
+            // Will be useful for checkin premissions!
+            boolean canRead = mFile.canRead();
+            final long FileSize = mFile.length();
+
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                        Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                    // Show an explanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+
+                } else {
+
+                    // No explanation needed, we can request the permission.
+
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                            MY_PERMISSIONS_REQUEST_READ);
+
+                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                    // app-defined int constant. The callback method gets the
+                    // result of the request.
+                }
+            }
+
+
+
+            if (fileNotNull && fileExist) {
+                InputStream stream = null;
+                try {
+                    stream = new FileInputStream(mFile);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                if(stream != null){
+
+                    add_song.setEnabled(false);
+                    showProgressDialog(0);
+                    // Create a reference to "file"
+                    storageRef = storageRef.child(selectedUri.getLastPathSegment());
+
+                    UploadTask uploadTask = storageRef.putStream(stream);
+
+                    uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            float ts = (float) taskSnapshot.getBytesTransferred() / FileSize;
+                            long progress = Math.round(ts * 100);
+                            showProgressDialog(progress);
+                        }
+                    });
+
+                    uploadTask.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            hideProgressDialog();
+                            Toast.makeText(getActivity(), "Uploading failed", Toast.LENGTH_LONG).show();
+                            // Handle unsuccessful uploads
+                        }
+                    });
+
+                    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            add_song.setEnabled(true);
+                            hideProgressDialog();
+                            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                            Log.e("Url", "DownloadUrl: "+downloadUrl);
+                            songUrl=downloadUrl;
+                        }
+                    });
+                }
+                else
+                {
+                    Toast.makeText(getActivity(), "Getting null file", Toast.LENGTH_LONG).show();
+                }
+            }else {
+                Toast.makeText(getActivity(), "File does not exist", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        private void Cleanup()
+        {
+            EditText etArtist = getView().findViewById(R.id.etArtist);
+            EditText etAlbum = getView().findViewById(R.id.etAlbum);
+            EditText etName = getView().findViewById(R.id.etName);
+            EditText etPrice = getView().findViewById(R.id.etPrice);
+
+            etArtist.setText("");
+            etAlbum.setText("");
+            etName.setText("");
+            etPrice.setText("");
+
+            //Spinner spGenre = getView().findViewById(R.id.spinner);
+
         }
     }
 
