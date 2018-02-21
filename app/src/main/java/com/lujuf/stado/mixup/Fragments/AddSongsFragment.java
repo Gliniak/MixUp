@@ -398,7 +398,14 @@ public class AddSongsFragment extends Fragment {
                     add_song.setEnabled(false);
                     showProgressDialog(0);
                     // Create a reference to "file"
-                    storageRef = storageRef.child(selectedUri.getLastPathSegment());
+                    String str = selectedUri.getLastPathSegment();
+
+                    if(str.indexOf("/") != -1)
+                        str = str.substring(str.lastIndexOf("/"), str.length());
+                    else str = str.substring(str.indexOf(":")+1, str.length());
+
+                    String str2 = "Songs/"+mAuth.getUid();
+                    storageRef = storageRef.child(str2+str);
 
                     UploadTask uploadTask = storageRef.putStream(stream);
 

@@ -117,12 +117,11 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
             if(!path.contains("/"))
                 return;
 
-            final String fileName = path.substring(path.lastIndexOf("/"), path.length());
-
+            final String fileName = path.substring(path.lastIndexOf("/")+1, path.length());
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
 
-            path = path.substring(path.lastIndexOf("/"));
+            path = path.replace("/v0/b/mixup-fbafb.appspot.com/o", "");
             StorageReference gsReference = storage.getReferenceFromUrl("gs://mixup-fbafb.appspot.com/" + path);
 
             File localFile = null;
@@ -164,10 +163,10 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
                 return;
 
             FirebaseStorage storage = FirebaseStorage.getInstance();
+            final String fileName = path.substring(path.lastIndexOf("/")+1, path.length());
 
-            final String fileName = path.substring(path.lastIndexOf("/"), path.length());
+            path = path.replace("/v0/b/mixup-fbafb.appspot.com/o", "");
 
-            path = path.substring(path.lastIndexOf("/")+1);
             StorageReference gsReference = storage.getReferenceFromUrl("gs://mixup-fbafb.appspot.com/" + path);
 
             String sdPath = view.getContext().getApplicationContext().getExternalFilesDir(DIRECTORY_MUSIC).toString();
@@ -201,7 +200,6 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
                 }
             });
         }
-
     }
 
 
