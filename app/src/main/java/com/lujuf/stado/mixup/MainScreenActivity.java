@@ -57,6 +57,7 @@ public class MainScreenActivity extends AppCompatActivity
     private ImageView userAvatar;
 
     private TextView cartItems;
+    private TextView fragment_name;
 
     private RelativeLayout playerLayout;
 
@@ -87,6 +88,7 @@ public class MainScreenActivity extends AppCompatActivity
 
         userCart = findViewById(R.id.menu_user_cart);
         cartItems = findViewById(R.id.cart_items_amount);
+        fragment_name = findViewById(R.id.menu_user_fragment_name);
         playerLayout = findViewById(R.id.app_bar_player);
 
         AudioPlayerClass.getInstance().AddSongsFromLocation(context.getExternalFilesDir(DIRECTORY_MUSIC).toString());
@@ -104,7 +106,7 @@ public class MainScreenActivity extends AppCompatActivity
                     ft.commit();
                 }
 
-                getSupportActionBar().setTitle(R.string.bar_text_user_cart);
+                fragment_name.setText(R.string.bar_text_user_cart);
             }
         });
 
@@ -173,10 +175,10 @@ public class MainScreenActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                mainToolBar.setTitle(R.string.bar_text_user_profile);
+                fragment_name.setText(R.string.bar_text_user_profile);
                 Log.d("GUI", "User Pressed Avatar!");
 
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
 
                 Fragment fragment = new MyProfileFragment();
@@ -198,7 +200,7 @@ public class MainScreenActivity extends AppCompatActivity
         inflater = getLayoutInflater();
 
         Fragment fragment = new ExploreFragment();
-        //mainToolBar.setTitle("Explore"); // Need to do this auto
+        fragment_name.setText("Explore"); // Need to do this auto
 
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -212,7 +214,7 @@ public class MainScreenActivity extends AppCompatActivity
     public void onBackPressed() {
         playerLayout.setVisibility(View.GONE);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -231,13 +233,13 @@ public class MainScreenActivity extends AppCompatActivity
         switch(id)
         {
             case R.id.nav_wall:
-                getSupportActionBar().setTitle(R.string.bar_text_wall);
+                fragment_name.setText(R.string.bar_text_wall);
                 Log.d("GUI", "User Pressed Wall Button!");
                 fragment = new WallFragment();
                 break;
 
             case R.id.nav_add_songs:
-                getSupportActionBar().setTitle(R.string.bar_text_add_songs);
+                fragment_name.setText(R.string.bar_text_add_songs);
                 Log.d("GUI", "User Pressed Add Songs Button!");
                 fragment = new AddSongsFragment();
                 break;
@@ -249,30 +251,30 @@ public class MainScreenActivity extends AppCompatActivity
                 break;
             */
             case R.id.nav_my_lib:
-                getSupportActionBar().setTitle("My Library");
+                fragment_name.setText("My Library");
                 Log.d("GUI", "User Pressed My library Button!");
                 fragment = new MyLibFragment();
                 break;
 
             case R.id.nav_explore:
-                getSupportActionBar().setTitle("Explore");
+                fragment_name.setText("Explore");
                 Log.d("GUI", "User Pressed Explore Button!");
                 fragment = new ExploreFragment();
                 break;
 
             case R.id.nav_my_songs:
-                getSupportActionBar().setTitle("My Songs");
+                fragment_name.setText("My Songs");
                 Log.d("GUI", "User Pressed My Songs Button!");
                 fragment = new MySongsFragment(); // As dummy Fragment
                 break;
 
             case R.id.nav_app_settings:
-                getSupportActionBar().setTitle(R.string.bar_text_settings);
+                fragment_name.setText(R.string.bar_text_settings);
                 fragment = new AppSettingsFragment();
                 break;
 
             case R.id.nav_order_history:
-                getSupportActionBar().setTitle(R.string.bar_text_settings);
+                fragment_name.setText("Orders History");
                 fragment = new OrdersFragment();
                 break;
 
@@ -294,7 +296,7 @@ public class MainScreenActivity extends AppCompatActivity
             ft.commit();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

@@ -18,20 +18,17 @@
             android:id="@+id/main_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:layout_marginEnd="60dp"
-            android:background="?attr/colorPrimary"
-            app:title="hello there, General kenobi">
+            android:background="?attr/colorPrimary">
 
+            <include
+                android:id="@+id/cart_button_layout"
+                layout="@layout/cart_button_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
 
         </android.support.v7.widget.Toolbar>
 
-        <include
-            android:id="@+id/cart_button_layout"
-            layout="@layout/cart_button_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="330dp"
-            android:layout_weight="1" />
+
 
     </android.support.design.widget.AppBarLayout>
 

@@ -152,7 +152,7 @@ public class AudioPlayerClass {
 
     public void PlaySong(View view, String Path)
     {
-        if(player.isPlaying())
+        if(player.isPlaying() || player.getCurrentPosition() > 1)
             StopSong(view);
 
     // TODO: Same here
