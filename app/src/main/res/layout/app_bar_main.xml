@@ -15,25 +15,24 @@
         android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/main_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary">
+            android:layout_marginEnd="60dp"
+            android:background="?attr/colorPrimary"
+            app:title="hello there, General kenobi">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
 
-            <include
-                layout="@layout/cart_button_layout"
-                android:id="@+id/cart_button_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end" />
-
-        </LinearLayout>
         </android.support.v7.widget.Toolbar>
+
+        <include
+            android:id="@+id/cart_button_layout"
+            layout="@layout/cart_button_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="330dp"
+            android:layout_weight="1" />
+
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
@@ -42,8 +41,8 @@
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/appBarLayout"
-        android:background="@drawable/app_bg_xhdpi"
-        >
+        android:layout_marginBottom="72dp"
+        android:background="@drawable/app_bg_xhdpi">
 
     </FrameLayout>
 

@@ -80,8 +80,9 @@ public class MainScreenActivity extends AppCompatActivity
         context = getApplicationContext();
 
         // Adding Main Bar to Layout
-        mainToolBar = findViewById(R.id.toolbar);
+        mainToolBar = findViewById(R.id.main_toolbar);
         setSupportActionBar(mainToolBar);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         userCart = findViewById(R.id.menu_user_cart);
         cartItems = findViewById(R.id.cart_items_amount);
@@ -196,7 +197,7 @@ public class MainScreenActivity extends AppCompatActivity
         inflater = getLayoutInflater();
 
         Fragment fragment = new ExploreFragment();
-        getSupportActionBar().setTitle("Explore"); // Need to do this auto
+        //mainToolBar.setTitle("Explore"); // Need to do this auto
 
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

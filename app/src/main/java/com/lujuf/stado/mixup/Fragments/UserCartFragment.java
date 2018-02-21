@@ -142,7 +142,9 @@ public class UserCartFragment extends Fragment {
 
         // Important lesson!
         // If we want to remove listener we have to be in the same "place" as we creating listener... #PoorEngrish
-        FirebaseQueries.GetUserCart(mDatabase, mAuth.getUid()).removeEventListener(CartListener);
+
+        // TODO: CRASHING HERE!
+        //FirebaseQueries.GetUserCart(mDatabase, mAuth.getUid()).removeEventListener(CartListener);
 
         this.getContext().stopService(new Intent(this.getContext(), PayPalService.class));
         super.onDestroy();
