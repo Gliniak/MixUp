@@ -92,6 +92,20 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
         @Override
         public void onClick(View v) {
             if (v.getId() == play_song.getId()) {
+                if(play_song.getTag() == "PLAYING") {
+                    play_song.setImageResource(R.drawable.ic_play_circle_filled_black_24dp);
+                    play_song.setTag("PAUSED");
+                    AudioPlayerClass.getInstance().PauseSong();
+                    return;
+                }
+
+                if(play_song.getTag() == "PAUSED") {
+                    play_song.setImageResource(R.drawable.ic_pause_circle_filled_black_24dp);
+                    play_song.setTag("PLAYING");
+                    AudioPlayerClass.getInstance().PlaySong(0);
+                    return;
+                }
+
                 FirebaseDatabaseObject.DatabaseSongs song = songsList.get(getAdapterPosition());
                 Toast.makeText(v.getContext(), "You Playing Song: " + song.songData.Name, Toast.LENGTH_SHORT).show();
 
@@ -139,8 +153,11 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                     Log.d("FIREBASE DOWNLOAD", "FILE DOWNLOADING COMPLETED");
 
-                    if(autoPlay)
+                    if(autoPlay) {
                         AudioPlayerClass.getInstance().PlaySong(view, localPath);
+                        play_song.setImageResource(R.drawable.ic_pause_circle_filled_black_24dp);
+                        play_song.setTag("PLAYING");
+                    }
                     // Local temp file has been created
                 }
             }).addOnFailureListener(new OnFailureListener() {
