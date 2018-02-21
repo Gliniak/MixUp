@@ -30,6 +30,7 @@ import com.lujuf.stado.mixup.Fragments.AppSettingsFragment;
 import com.lujuf.stado.mixup.Fragments.ExploreFragment;
 import com.lujuf.stado.mixup.Fragments.MyLibFragment;
 import com.lujuf.stado.mixup.Fragments.MyProfileFragment;
+import com.lujuf.stado.mixup.Fragments.MySongsFragment;
 import com.lujuf.stado.mixup.Fragments.OrdersFragment;
 import com.lujuf.stado.mixup.Fragments.UserCartFragment;
 import com.lujuf.stado.mixup.Fragments.WallFragment;
@@ -262,7 +263,7 @@ public class MainScreenActivity extends AppCompatActivity
             case R.id.nav_my_songs:
                 getSupportActionBar().setTitle("My Songs");
                 Log.d("GUI", "User Pressed My Songs Button!");
-                fragment = new WallFragment(); // As dummy Fragment
+                fragment = new MySongsFragment(); // As dummy Fragment
                 break;
 
             case R.id.nav_app_settings:
