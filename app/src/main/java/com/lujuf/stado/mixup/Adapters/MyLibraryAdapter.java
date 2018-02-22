@@ -154,6 +154,8 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
                     Log.d("FIREBASE DOWNLOAD", "FILE DOWNLOADING COMPLETED");
 
                     if(autoPlay) {
+
+
                         AudioPlayerClass.getInstance().PlaySong(view, localPath);
                         play_song.setImageResource(R.drawable.ic_pause_circle_filled_black_24dp);
                         play_song.setTag("PLAYING");
@@ -198,7 +200,9 @@ public class MyLibraryAdapter extends RecyclerView.Adapter<MyLibraryAdapter.MyVi
                     download_progress_bar.setVisibility(View.INVISIBLE);
                     download_song.setImageResource(R.drawable.ic_done_black_24dp);
                     download_song.setVisibility(View.VISIBLE);
-                    Log.d("FIREBASE DOWNLOAD", "FILE DOWNLOADING COMPLETED: " +  file.length());//localPath);
+
+                    AudioPlayerClass.getInstance().AddSongToList(file.getPath());
+                    Log.d("FIREBASE DOWNLOAD", "FILE DOWNLOADING COMPLETED: " +  fileName);
                     // Local temp file has been created
                 }
             }).addOnFailureListener(new OnFailureListener() {

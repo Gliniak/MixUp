@@ -31,10 +31,17 @@ public class AudioPlayerClass {
         player = new MediaPlayer();
         songsQueue = new ArrayList<String>();
 
-        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+        player.reset();
+
+        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
-            public void onPrepared(MediaPlayer mediaPlayer) {
-                player.start();
+            public void onCompletion(MediaPlayer mediaPlayer) {
+
+                if(!songsQueue.isEmpty())
+                {
+                    //player.reset();
+                    //NextSong();
+                }
             }
         });
     }
@@ -48,19 +55,25 @@ public class AudioPlayerClass {
             {
                 File[] files = readDir.listFiles();
                 for (File file : files) {
-                    if(file.getName().endsWith(".mp3"))
-                        songsQueue.add("file://" + file.getPath());
+                    if(file.getName().endsWith(".mp3")) {
+
+                        // /storage/emulated/0/
+                        String location = file.getAbsolutePath();
+                        location = location.replace("/storage/emulated/0/", "/sdcard/");
+                        AddSongToList(location);
+                    }
                 }
             }
         }
     }
 
-    public void AddSongToList(String fileName)
+    public void AddSongToList(String path)
     {
-        if(IsInList(fileName))
+        if(IsInList(path))
             return;
 
-        songsQueue.add("file://" + fileName);
+        songsQueue.add("file://" + path);
+        Log.d("APC", "Added Song: " + path);
     }
 
     public boolean IsInList(String Path)
@@ -91,6 +104,7 @@ public class AudioPlayerClass {
         if(++queuePos >= songsQueue.size())
             queuePos = 0;
 
+        player.reset();
         PlaySong(queuePos);
     }
 
@@ -99,6 +113,7 @@ public class AudioPlayerClass {
         if(--queuePos < 0)
             queuePos = songsQueue.size()-1;
 
+        player.reset();
         PlaySong(queuePos);
     }
 
@@ -107,7 +122,8 @@ public class AudioPlayerClass {
         if(player.isPlaying())
             return;
 
-        if(!player.isPlaying() && player.getCurrentPosition() > 1)
+        // TODO: HACKFIX: Let's say there won't be songs longer than hour
+        if(!player.isPlaying() && player.getCurrentPosition() > 1 && player.getCurrentPosition() < (60*60*1000))
         {
             // Something is paused?
             player.start();
@@ -137,6 +153,7 @@ public class AudioPlayerClass {
     public void StopSong(View view)
     {
         player.stop();
+        player.reset();
 
         // TODO: This is always null
         ImageButton playButton = view.findViewById(R.id.player_play_button);

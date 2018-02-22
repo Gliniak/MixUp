@@ -401,10 +401,10 @@ public class AddSongsFragment extends Fragment {
                     String str = selectedUri.getLastPathSegment();
 
                     if(str.indexOf("/") != -1)
-                        str = str.substring(str.lastIndexOf("/"), str.length());
+                        str = str.substring(str.lastIndexOf("/")+1, str.length());
                     else str = str.substring(str.indexOf(":")+1, str.length());
 
-                    String str2 = "Songs/"+mAuth.getUid();
+                    String str2 = "Songs/"+ mAuth.getUid() + "/";
                     storageRef = storageRef.child(str2+str);
 
                     UploadTask uploadTask = storageRef.putStream(stream);
